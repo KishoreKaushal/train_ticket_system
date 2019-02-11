@@ -43,6 +43,66 @@
                 $('a#showSignUp').click(toggleSignInSignUp);
             });
 
+            $('#btn-login').click(function(){
+                var email = $('#').val();
+                var passwd = $('#').val();
+                if (!validateEmail(email)) {
+                    
+                } else if (!validatePassword(passwd)) {
+                    
+                } else {
+                    var loginData = {
+                        "email" 	: email,
+                        "password"	: passwd
+                    };
+                    $.ajax({
+                        type	: 'POST',
+                        url		: 'http://localhost/ctf-iitpkd/utility/authenticate.php',
+                        data	: { login_credentials : JSON.stringify(loginData) },
+                        success	: function(response){
+                            response = JSON.parse(response);
+                            
+                            console.log(response);
+                            if(response['status'] === true){
+                                window.location.replace("./user/home.php");
+                            } else {
+                                
+                            }
+                        }
+                    });
+                }
+            });
+				
+				
+
+
+            $('#btn-signup').click(function(){
+
+                if (!validateEmail(email)) {
+                
+                } else if (passwd !== confirmPasswd) {
+                
+                } else if (!validatePassword(passwd)) {
+                
+                } else {
+                
+                    var signUpData = {
+                        "email" 	: email,
+                        
+                    };
+
+                    $.ajax({
+                        type	: 'POST',
+                        url		: 'http://localhost/ctf-iitpkd/utility/register.php',
+                        data	: {request : JSON.stringify(signUpData)},
+                        success	: function(response){
+                            response = JSON.parse(response);
+                            console.log(response);
+                        }
+                    });
+                }
+            });
+
         </script>        
 
     </head>
@@ -81,7 +141,7 @@
                                     <label for="signup-conf-password">Confirm password</label>
                                 </div>
                                 <hr>
-                                <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Register</button>
+                                <button id="#btn-signup" class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Register</button>
                                 <a id="showSignIn" class="d-block text-center mt-2 small" href='#'>Sign In</a>
                                 
                                 
@@ -117,7 +177,7 @@
 
                                 <hr>
 
-                                <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Sign In</button>
+                                <button id="#btn-login" class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Sign In</button>
                                 <a id="showSignUp" class="d-block text-center mt-2 small" href='#'>Sign Up</a>
                                 
                             </form>
