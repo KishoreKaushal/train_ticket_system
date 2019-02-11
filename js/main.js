@@ -20,9 +20,18 @@ function validatePassword(passwd) {
         if(passwdRegExp.test(passwd) == false){
             //alert('Password [6 to 20 characters which contain at least one numeric digit, one uppercase and one lowercase letter]');
             return false;
-        } else {
-            return true;
         }
-    }
-    return false;
+    } else return false;
+    return true;
+}
+
+function validateUsername(username) {
+    if (typeof(username) === "string") {
+        var usernameRegExp = /[A-Za-z_0-9]+/;
+        if (usernameRegExp.test(username) == false || username.length < 4) {
+            return false;
+        }
+    } else return false;
+
+    return true;
 }

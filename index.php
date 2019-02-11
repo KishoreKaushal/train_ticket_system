@@ -37,77 +37,89 @@
                 $('#invalidLoginResponse').hide();
             });
 
-
-
             $(function(){
                 $('a#showSignIn').click(toggleSignInSignUp);
                 $('a#showSignUp').click(toggleSignInSignUp);
                 $('#invalidLoginResponse .close').click(function () {$('#invalidLoginResponse').toggle()});
-            });
 
-            $('#btn-login').click(function(){
-                var username = $('#signin-username').val();
-                var password = $('#signin-password').val();
 
-                if (!validateEmail(email)) {
-                    alert('Enter a valid email.');
-                } else if (!validatePassword(passwd)) {
-                    alert('Password [6 to 20 characters which contain at least one numeric digit, one uppercase and one lowercase letter]');
-                } else {
-                    var loginData = {
-                        "username" 	: username,
-                        "password"	: password
-                    };
-                    $.ajax({
-                        type	: 'POST',
-                        url		: 'http://localhost/train_ticket_system/utility/authenticate.php',
-                        data	: { login_credentials : JSON.stringify(loginData) },
-                        success	: function(response){
+                $('#btn-signin').click(function(){
+                    alert('kaushal signin');
+                    console.log("i m here");
+                    var username = $('#signin-username').val();
+                    var password = $('#signin-password').val();
+                    if (!validateUsername(username)){
+                        alert('Enter a valid user.');
+                    } 
+                    // else if (!validatePassword(password)) {
+                    //     alert('Password [6 to 20 characters which contain at least one numeric digit, one uppercase and one lowercase letter]');
+                    // }
+                     else {
+                        var loginData = {
+                            "username" 	: username,
+                            "password"	: password
+                        };
+                        $.ajax({
+                            type	: 'POST',
+                            url		: 'http://localhost/train_ticket_system/utility/authenticate.php',
+                            data	: { login_credentials : JSON.stringify(loginData) },
+                            success	: function(response){
 
-                            response = JSON.parse(response);
-                            console.log(response);
+                                console.log(response);
+                                response = JSON.parse(response);
 
-                            if(response['status'] === true || response['msg'] === "LOGGED IN"){
-                                window.location.replace("./user/home.php");
-                            } else {
-                                $('#invalidLoginResponse').show();
+                                if(response['status'] === true || response['msg'] === "LOGGED IN"){
+                                    window.location.replace("./user/show_current_user.php");
+                                } else {
+                                    $('#invalidLoginResponse').show();
+                                }
                             }
-                        }
-                    });
-                }
+                        });
+                    }
+                });
+
+                $('#btn-signup').click(function(){
+                    alert('kaushal signup');
+                    console.log("i m here");
+
+                    var username = $('#signup-username').val();
+                    var email = $('#signup-email').val();
+                    var password = $('#signup-password').val();
+                    var confPassword = $('#signup-conf-password').val();
+                    
+                    if (!validateUsername(username)){
+                        alert('Enter a valid user.');
+                    } else if (!validateEmail(email)) {
+                        alert('Enter a valid email.');
+                    } else if (password !== confirmPassword) {
+                        alert('Passwords do not match.');
+                    } else if (!validatePassword(password)) {
+                        alert('Password [6 to 20 characters which contain at least one numeric digit, one uppercase and one lowercase letter]');
+                    } else {
+                    
+                        var signUpData = {
+                            "username" 	: username,
+                            "email"     : email,
+                            "password"  : password                        
+                        };
+
+                        $.ajax({
+                            type	: 'POST',
+                            url		: 'http://localhost/train_ticket_system/utility/register.php',
+                            data	: {request : JSON.stringify(signUpData)},
+                            success	: function(response){
+                                response = JSON.parse(response);
+                                console.log(response);
+                            }
+                        });
+                    }
+                });
+
+
+
             });
 
-            $('#btn-signup').click(function(){
-                var username = $('#signup-username').val();
-                var email = $('#signup-email').val();
-                var password = $('#signup-password').val();
-                var confPassword = $('#signup-conf-password').val();
-
-                if (!validateEmail(email)) {
-                    alert('Enter a valid email.');
-                } else if (password !== confirmPasswd) {
-                    alert('Passwords do not match.');
-                } else if (!validatePassword(password)) {
-                    alert('Password [6 to 20 characters which contain at least one numeric digit, one uppercase and one lowercase letter]');
-                } else {
-                
-                    var signUpData = {
-                        "username" 	: username,
-                        "email"     : email,
-                        "password"  : password                        
-                    };
-
-                    $.ajax({
-                        type	: 'POST',
-                        url		: 'http://localhost/train_ticket_system/utility/register.php',
-                        data	: {request : JSON.stringify(signUpData)},
-                        success	: function(response){
-                            response = JSON.parse(response);
-                            console.log(response);
-                        }
-                    });
-                }
-            });
+            
 
         </script>        
 
@@ -147,7 +159,7 @@
                                     <label for="signup-conf-password">Confirm password</label>
                                 </div>
                                 <hr>
-                                <button id="#btn-signup" class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Register</button>
+                                <button id="btn-signup" class="btn btn-lg btn-primary btn-block text-uppercase" type="button">Register</button>
                                 <a id="showSignIn" class="d-block text-center mt-2 small" href='#'>Sign In</a>
                                 
                                 
@@ -188,7 +200,7 @@
 
                                 <hr>
 
-                                <button id="#btn-login" class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Sign In</button>
+                                <button id="btn-signin" class="btn btn-lg btn-primary btn-block text-uppercase" type="button">Sign In</button>
                                 <a id="showSignUp" class="d-block text-center mt-2 small" href='#'>Sign Up</a>
                                 
                             </form>

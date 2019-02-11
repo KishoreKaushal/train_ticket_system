@@ -10,19 +10,24 @@
         
         $login_credentials = json_decode($_POST['login_credentials'], true);
 
-        $username = $DBcon->real_escape_string(strip_tags($login_credentials['username']));
-        $password = $DBcon->real_escape_string(strip_tags($login_credentials['password']));
+        require_once './dbconnect_public.php';
+
+        $username = $DBcon_public->real_escape_string(strip_tags($login_credentials['username']));
+        $password = $DBcon_public->real_escape_string(strip_tags($login_credentials['password']));
+
+        $DBcon_public->close();
 
         try {
-            require_once "/train_ticket_system/utility/dbconnect_user.php";
+            require_once "./dbconnect_user.php";
             
             if ($DBcon->connect_errno) {
                 throw new Exception("INVALID CREDENTIALS");
             } else {
                 $_SESSION['username'] = $username;
+                $_SESSION['password'] = $password;
                 $response['status'] = true;         // authentication succesful
             }
-
+            $DBcon->close();
         } catch (Exception $e){
             $response['status'] = false;
             $response['msg'] = $e->getMessage();
@@ -30,11 +35,11 @@
             session_destroy();
             unset($_SESSION['username']);
         }
+
     } else {
         $response['status'] = false;
         $response['msg'] = '';
     }
-
-    $DBcon->close();
+    
     echo json_encode($response);
 ?>
