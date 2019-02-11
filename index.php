@@ -34,6 +34,7 @@
 
             $(document).ready(function(){
                 $('div#signupContainer').hide();
+                $('#invalidLoginResponse').hide();
             });
 
 
@@ -41,59 +42,64 @@
             $(function(){
                 $('a#showSignIn').click(toggleSignInSignUp);
                 $('a#showSignUp').click(toggleSignInSignUp);
+                $('#invalidLoginResponse .close').click(function () {$('#invalidLoginResponse').toggle()});
             });
 
             $('#btn-login').click(function(){
-                var email = $('#').val();
-                var passwd = $('#').val();
+                var username = $('#signin-username').val();
+                var password = $('#signin-password').val();
+
                 if (!validateEmail(email)) {
-                    
+                    alert('Enter a valid email.');
                 } else if (!validatePassword(passwd)) {
-                    
+                    alert('Password [6 to 20 characters which contain at least one numeric digit, one uppercase and one lowercase letter]');
                 } else {
                     var loginData = {
-                        "email" 	: email,
-                        "password"	: passwd
+                        "username" 	: username,
+                        "password"	: password
                     };
                     $.ajax({
                         type	: 'POST',
-                        url		: 'http://localhost/ctf-iitpkd/utility/authenticate.php',
+                        url		: 'http://localhost/train_ticket_system/utility/authenticate.php',
                         data	: { login_credentials : JSON.stringify(loginData) },
                         success	: function(response){
+
                             response = JSON.parse(response);
-                            
                             console.log(response);
-                            if(response['status'] === true){
+
+                            if(response['status'] === true || response['msg'] === "LOGGED IN"){
                                 window.location.replace("./user/home.php");
                             } else {
-                                
+                                $('#invalidLoginResponse').show();
                             }
                         }
                     });
                 }
             });
-				
-				
-
 
             $('#btn-signup').click(function(){
+                var username = $('#signup-username').val();
+                var email = $('#signup-email').val();
+                var password = $('#signup-password').val();
+                var confPassword = $('#signup-conf-password').val();
 
                 if (!validateEmail(email)) {
-                
-                } else if (passwd !== confirmPasswd) {
-                
-                } else if (!validatePassword(passwd)) {
-                
+                    alert('Enter a valid email.');
+                } else if (password !== confirmPasswd) {
+                    alert('Passwords do not match.');
+                } else if (!validatePassword(password)) {
+                    alert('Password [6 to 20 characters which contain at least one numeric digit, one uppercase and one lowercase letter]');
                 } else {
                 
                     var signUpData = {
-                        "email" 	: email,
-                        
+                        "username" 	: username,
+                        "email"     : email,
+                        "password"  : password                        
                     };
 
                     $.ajax({
                         type	: 'POST',
-                        url		: 'http://localhost/ctf-iitpkd/utility/register.php',
+                        url		: 'http://localhost/train_ticket_system/utility/register.php',
                         data	: {request : JSON.stringify(signUpData)},
                         success	: function(response){
                             response = JSON.parse(response);
@@ -162,6 +168,11 @@
                         <div class="card-body">
                             <h5 class="card-title text-center">Welcome Back!</h5>
                             <form class="form-signin">
+
+                                <div id="invalidLoginResponse" class="alert alert-danger">
+                                    <button type="button" class="close">&times;</button>
+                                    <strong>Error!</strong> Invalid login credentials.
+                                </div>
 
                                 <div class="form-label-group">
                                     <input type="text" id="signin-username" class="form-control" placeholder="Username" required autofocus>

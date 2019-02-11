@@ -1,7 +1,7 @@
 <?php
   $DBhost = "localhost";
-  $DBuser = "root";
-  $DBpass = "password";
+  $DBuser = "usr_public";
+  $DBpass = "general_public";
   $DBname = "train_ticket_system";
   $DBcon = new MySQLi($DBhost,$DBuser,$DBpass,$DBname);
      if ($DBcon->connect_errno) {
