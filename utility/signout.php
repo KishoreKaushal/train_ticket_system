@@ -1,4 +1,5 @@
 <?php
+    echo $_SERVER['PHP_SELF'];
     session_start();
     
     // if (isset($_GET['logout']) || isset($_POST['logout'])) {

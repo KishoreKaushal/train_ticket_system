@@ -1,6 +1,6 @@
 <?php
 	session_start();
-	if (array_key_exists('uid' , $_SESSION) && isset($_SESSION['uid'])) {
+	if (array_key_exists('username' , $_SESSION) && isset($_SESSION['username'])) {
         // if user has already logged in
         header("Location: /train_ticket_system/user/home.php");
     }

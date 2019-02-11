@@ -1,23 +1,5 @@
 <?php
-    session_start();
-    require_once '../utility/dbconnect.php';
 
-    if (!(array_key_exists('uid' , $_SESSION) && isset($_SESSION['uid']))) {
-        header("Location: ../");
-    }
-    $query = $DBcon->query("SELECT `name`,`email` FROM `tbl_authentication` WHERE uid=".$_SESSION['uid']);
-    $row=$query->fetch_array();
-    $email = $row["email"];
-    $name = $row["name"];
-    // // $teamid = $row["teamid"];
-
-    // $query = $DBcon->query("SELECT * FROM `tbl_team` WHERE teamid=".$teamid);
-    // $row=$query->fetch_array();
-    // $teamname = $row['teamname'];
-    // $adminuid = $row['adminuid'];
-    // $score = $row['score'];
-    // $challenges_solved = $row['challengessolved'];
-    $DBcon->close();
 ?>
 
 <!DOCTYPE html>
@@ -111,7 +93,7 @@
               <a class="nav-link" href="#">Booking</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Information</a>
+              <a class="nav-link" href="./information.php">Information</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">My Profile</a>
@@ -139,11 +121,11 @@
 <div align = "center">
     <!-- <strong>HOME</strong> -->
     <br>
-    <marquee scrollamount="20" style = "color: red; font-size : 250%"> New train started by Railway minister Himanshu Rai </marquee>
+    <marquee scrollamount="10" style = "color: red; font-size : 150%"> New train started by Railway minister Himanshu Rai </marquee>
     <h1>
-        Welcome to the train booking site.
+        Aao ticket book karo
         <div style = "text-align:center">
-        <img src = "../utility/images/train2.jpg" style="width: 50%; height: 50%; padding-top : 10px">
+        <img src = "./img/train2.jpg" style="width: 50%; height: 50%; padding-top : 10px">
         </div>
   </h1>
 </div>
@@ -186,14 +168,12 @@
         <!-- Grid column -->
 
       </div>
-      <!-- Grid row-->
+
     <div class="footer-copyright text-center m-2">Made with &hearts; in IIT-PKD</div>
     </div>
-    <!-- Footer Elements -->
-  </footer>
-  <!-- Footer -->
 
-<!-- End page content -->
+  </footer>
+
 </div>
 
 
