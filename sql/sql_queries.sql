@@ -62,3 +62,6 @@ order by stoppage_idx;
 select pnr 
 from ticket as T
 where T.pnr = <?echo $query_pnr?> and T.userid = <>
+
+
+grant create user on *.* to rl_admin;

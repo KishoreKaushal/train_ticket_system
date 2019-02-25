@@ -44,8 +44,6 @@
 
 
                 $('#btn-signin').click(function(){
-                    alert('kaushal signin');
-                    console.log("i m here");
                     var username = $('#signin-username').val();
                     var password = $('#signin-password').val();
                     if (!validateUsername(username)){
@@ -69,7 +67,7 @@
                                 response = JSON.parse(response);
 
                                 if(response['status'] === true || response['msg'] === "LOGGED IN"){
-                                    window.location.replace("./user/show_current_user.php");
+                                    window.location.replace("./user/home.php");
                                 } else {
                                     $('#invalidLoginResponse').show();
                                 }
