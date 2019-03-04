@@ -15,7 +15,7 @@
 
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
@@ -75,6 +75,16 @@
       height:60px;   /* Height of the footer */
       background:#6cf;
     }
+
+    .w3-panel {
+        background: white
+    }
+
+    .form-book-ticket {
+        text-align: left;
+        color: black;
+        padding: 10px
+    }
 </style>
 
 <body>
@@ -127,7 +137,26 @@
         <div style = "text-align:center">
         <img src = "./img/train2.jpg" style="width: 50%; height: 50%; padding-top : 10px">
         </div>
-  </h1>
+    </h1>
+
+    <div class="w3-panel w3-card-2">
+        <form class="form-book-ticket">
+            <div class="form-group row">
+                <label for="" class="">From</label>
+                <div>
+                    <input type="text" class="form-control-plaintext" id="staticEmail2" value="email@example.com">
+                </div>
+                
+            </div>
+            <div class="form-group mx-sm-3">
+                <label for="inputPassword2" class="sr-only">Password</label>
+                <input type="password" class="form-control" id="inputPassword2" placeholder="Password">
+            </div>
+            <button type="submit" class="btn btn-primary mb-2">Confirm identity</button>
+        </form>    
+    </div>
+
+    
 </div>
 
 <!-- Footer -->
