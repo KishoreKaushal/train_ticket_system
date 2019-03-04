@@ -35,3 +35,13 @@ function validateUsername(username) {
 
     return true;
 }
+
+function validateSrcDestForm() {
+    if($('#source').val() !== $("#destination").val()) {
+        // alert("Source and destination are not same");
+        return true;
+    } else {
+        alert("Source and destination can't be same");
+        return false;
+    }
+}
