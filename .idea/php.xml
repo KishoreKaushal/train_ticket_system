@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PhpProjectSharedConfiguration" php_language_level="7" />
+  <component name="PhpRuntimeConfiguration">
+    <extensions>
+      <extension name="Parle" enabled="true" />
+      <extension name="ZendCache" enabled="true" />
+      <extension name="apache" enabled="false" />
+      <extension name="bcmath" enabled="false" />
+      <extension name="dba" enabled="false" />
+      <extension name="enchant" enabled="false" />
+      <extension name="event" enabled="true" />
+      <extension name="gmp" enabled="false" />
+      <extension name="imap" enabled="false" />
+      <extension name="interbase" enabled="false" />
+      <extension name="intl" enabled="false" />
+      <extension name="ldap" enabled="false" />
+      <extension name="mapscript" enabled="true" />
+      <extension name="mcrypt" enabled="false" />
+      <extension name="msgpack" enabled="true" />
+      <extension name="mssql" enabled="false" />
+      <extension name="mysql" enabled="false" />
+      <extension name="oci8" enabled="false" />
+      <extension name="odbc" enabled="false" />
+      <extension name="pdo_ibm" enabled="false" />
+      <extension name="pdo_pgsql" enabled="false" />
+      <extension name="pdo_sqlite" enabled="false" />
+      <extension name="pgsql" enabled="false" />
+      <extension name="pspell" enabled="false" />
+      <extension name="rdkafka" enabled="true" />
+      <extension name="recode" enabled="false" />
+      <extension name="snmp" enabled="false" />
+      <extension name="soap" enabled="false" />
+      <extension name="sodium" enabled="false" />
+      <extension name="solr" enabled="true" />
+      <extension name="sqlite3" enabled="false" />
+      <extension name="sybase" enabled="false" />
+      <extension name="sync" enabled="true" />
+      <extension name="tidy" enabled="false" />
+      <extension name="uopz" enabled="true" />
+      <extension name="xcache" enabled="true" />
+      <extension name="xmlrpc" enabled="false" />
+      <extension name="yaf" enabled="true" />
+      <extension name="yar" enabled="true" />
+    </extensions>
+  </component>
+</project>
