@@ -81,7 +81,7 @@ begin
         values (new.train_no, new.seat_no, new.date_journey, new.pnr, src_idx, dest_idx);
     elseif(new.status = 'CANCELLED' and old.status = 'CONFIRM') then
         delete from reservation
-        where T.pnr = new.pnr;
+        where reservation.pnr = new.pnr;
     else 
         signal sqlstate '45000' set message_text = 'Action not allowed';
     end if;

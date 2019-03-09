@@ -189,7 +189,7 @@ begin
 end;
 
 -- function to confirm a waitlisted ticket
-create or replace function confirm_ticket(pnr_ int, seat_no_ int)
+create or replace procedure confirm_ticket(pnr_ int, seat_no_ int)
 modifies sql data
 begin
     update ticket as T
