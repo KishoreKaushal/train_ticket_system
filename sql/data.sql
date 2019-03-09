@@ -123,3 +123,20 @@ insert into neighbours(st_a, st_b, distance) values
 ( 'BPL', 'UJN', 183 ),
 ( 'UDZ', 'UJN', 399 ),
 ( 'UJN', 'UDZ', 399 );
+
+
+insert into train(train_no, train_name, source_st, dest_st, fare_per_km) values
+(12698, 'TVC-MAS Express', 'TVC', 'MAS', 1.4),
+(12457, 'TVC-CAPE-MAS Superfast Express', 'TVC', 'MAS', 2.3);
+
+insert into path(train_no, station_code, sched_arr, sched_dept, stoppage_idx) values
+(12698, 'TVC', '03:30:00', '03:50:00', 0),
+(12698, 'PGT', '07:15:00', '07:20:00', 1),
+(12698, 'CBE', '07:45:00', '07:50:00', 2),
+(12698, 'ED', '08:45:00', '08:50:00', 3),
+(12698, 'MAS', '11:55:00', '12:25:00', 4);
+(12457, 'TVC', '10:00:00', '10:20:00', 0);
+(12457, 'CAPE', '10:55:00', '11:00:00',1);
+(12457, 'MDU', '13:35:00', '13:40:00', 2);
+(12457, 'TPJ', '15:10:00', '15:15:00', 3);
+(12457, 'MAS', '19:00:00', '19:30:00', 4);
