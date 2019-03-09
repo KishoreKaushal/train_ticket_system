@@ -6,9 +6,11 @@ begin
     if(new.stoppage_idx = 0) then
         if(not exists (select *
                        from train as T
-                       where (T.train_no = new.train_no and T.source_st = new.station_code))) then
+                       where (T.train_no = new.train_no))) then
             signal sqlstate '45000' set message_text = 'No such train exist';
-        else
+        elseif(new.station_code <> (select source_st from train as T where T.train_no = new.train_no)) then
+            signal sqlstate '45000' set message_text = 'Source station invalid';
+        else 
             set new.distance = 0;
         end if;
     else
@@ -22,13 +24,13 @@ begin
         else
             set new.distance = ((select T.distance
                                  from path as T
-                                 where T.train_no = new.train_no and T.stoppage_idx = (new.stoppage_idx - 1))
+                                 where (T.train_no = new.train_no and T.stoppage_idx = (new.stoppage_idx - 1)))
                                  +
                                 (select U.distance
                                  from neighbours as U
-                                 where U.st_b = new.station_code and U.st_a = (select T.station_code from
+                                 where (U.st_b = new.station_code and U.st_a = (select T.station_code from
                                                                                       path as T
-                                                                                      where T.train_no = train_no and T.stoppage_idx = (new.stoppage_idx - 1))));
+                                                                                      where T.train_no = new.train_no and T.stoppage_idx = (new.stoppage_idx - 1)))));
         end if;
     end if;
 end;
@@ -41,7 +43,7 @@ begin
     if(exists (select *
                from reservation as T
                where T.train_no = new.train_no and T.journey_date = new.journey_date and T.seat_no = new.seat_no and
-                     ((T.src_idx <= new.dest_idx and T.src_idx >= new.src_idx) or (T.dest_idx <= new.dest_idx and T.dest_idx >= new.src_idx) or
+                     ((T.src_idx < new.dest_idx and T.src_idx > new.src_idx) or (T.dest_idx < new.dest_idx and T.dest_idx > new.src_idx) or
                       (T.src_idx <= new.src_idx and T.dest_idx >= new.dest_idx)))) then
         signal sqlstate '45000' set message_text = 'Seat already reserved';
     end if;
@@ -56,12 +58,13 @@ begin
     declare dest_idx int unsigned;
     set new.date_resv = (select current_date);
     set new.time_resv = (select current_time);
-    if (new.seat_no is null) then
+    set src_idx = station_code_index(new.train_no, new.source);
+    set dest_idx = station_code_index(new.train_no, new.dest);
+    if(src_idx is null or dest_idx is null or src_idx >= dest_idx) then 
+        signal sqlstate '45000' set message_text = "Invalid source/destination/train no";
+    elseif (new.seat_no is null) then
         set new.status = 'WAITLISTED';
     else
-        set new.status = 'CONFIRMED';
-        set src_idx = station_code_index(new.train_no, new.source);
-        set dest_idx = station_code_index(new.train_no, new.dest);
         insert into reservation(train_no, seat_no, journey_date, pnr, src_idx, dest_idx)
         values (new.train_no, new.seat_no, new.date_journey, new.pnr, src_idx, dest_idx);
     end if;
@@ -79,9 +82,9 @@ begin
         set dest_idx = station_code_index(new.train_no, new.dest);
         insert into reservation(train_no, seat_no, journey_date, pnr, src_idx, dest_idx)
         values (new.train_no, new.seat_no, new.date_journey, new.pnr, src_idx, dest_idx);
-    elseif(new.status = 'CANCELLED' and old.status = 'CONFIRM') then
+    elseif(new.status = 'CANCELLED' and old.status <> 'CANCELLED') then
         delete from reservation
-        where T.pnr = new.pnr;
+        where reservation.pnr = new.pnr;
     else 
         signal sqlstate '45000' set message_text = 'Action not allowed';
     end if;

@@ -29,7 +29,11 @@ begin
     set fare_per_km = (select T.fare_per_km from train as T where T.train_no = train_no);
     set dist_src = (select T.distance from path as T where T.train_no = train_no and T.station_code = src);
     set dist_dest = (select T.distance from path as T where T.train_no = train_no and T.station_code = dest);
-    return (dist_dest - dist_src) * fare_per_km;
+    if(fare_per_km is null or dist_src is null or dist_dest is null) then 
+        signal sqlstate '45000' set message_text = 'Invalid data';
+    else 
+        return (dist_dest - dist_src) * fare_per_km;
+    end if;
 end;
 
 -- function that returns the stoppage index of a station for a particular train
@@ -53,9 +57,14 @@ end;
 create or replace procedure train_details(in tr_no int)
 reads sql data
 begin
-    select stoppage_idx + 1, station_code, station_name, sched_arr, sched_dept, distance
-    from path natural join station
-    where train_no = tr_no;
+    if(not exists(select * from train where train_no = tr_no)) then
+        signal sqlstate '45500' set message_text = 'Invalid train number';
+    else 
+        select stoppage_idx + 1, station_code, station_name, sched_arr, sched_dept, distance
+        from path natural join station
+        where train_no = tr_no
+        order by stoppage_idx;
+    end if;
 end;
 
 -- procedure to display trains between any two particular stations
@@ -67,7 +76,8 @@ begin
     else 
         select V.train_no, V.train_name, T.sched_dept, U.sched_arr, (U.distance - T.distance) as distance_travelled, ((U.distance - T.distance) * V.fare_per_km) as total_fare
         from (path as T) join (path as U) using (train_no) natural join (train as V)
-        where T.station_code = src_st and U.station_code = dest_st and T.stoppage_idx < U.stoppage_idx and T.train_no = V.train_no;
+        where T.station_code = src_st and U.station_code = dest_st and T.stoppage_idx < U.stoppage_idx and T.train_no = V.train_no
+        order by T.sched_dept;
     end if;
 end;
 
@@ -86,10 +96,12 @@ begin
         signal sqlstate '45000' set message_text = 'Source station not valid for the given train';
     elseif(dest_idx is null) then
         signal sqlstate '45000' set message_text = 'Destination station not valid for the given train';
+    elseif(src_idx >= dest_idx) then 
+        signal sqlstate '45000' set message_text = 'Source cannot come after destination';
     elseif(exists (select *
                 from reservation as T
                 where T.train_no = train_no and T.journey_date = journey_date and T.seat_no = seat_no and
-                        ((T.src_idx <= dest_idx and T.src_idx >= src_idx) or (T.dest_idx <= dest_idx and T.dest_idx >= src_idx) or
+                        ((T.src_idx < dest_idx and T.src_idx > src_idx) or (T.dest_idx < dest_idx and T.dest_idx > src_idx) or
                         (T.src_idx <= src_idx and T.dest_idx >= dest_idx)))) then
                 return 0;
     else
@@ -169,8 +181,16 @@ end;
 create or replace procedure book_ticket(in pnr bigint unsigned, in userid varchar(50), in src varchar(5), in dest varchar(5), in train_no int, in date_journey date, in seat_no int unsigned)
 modifies sql data
 begin
-    insert into ticket(pnr, userid, source, dest, train_no, date_journey, seat_no)
-    values (pnr, userid, src, dest, train_no, date_journey, seat_no);
+    if(date_journey <= current_date) then 
+        signal sqlstate '45000' set message_text = 'Reservation should be done atleast one day before the date of journey';
+    elseif(datediff(date_journey, current_date) > 10) then 
+        signal sqlstate '45000' set message_text = 'Reservation is allowed for atmost 10 days in advance';
+    elseif(seat_no <= 0 or seat_no > 20) then
+        signal sqlstate '45000' set message_text = 'Seat number should be between 1 and 20';
+    else 
+        insert into ticket(pnr, userid, source, dest, train_no, date_journey, seat_no)
+        values (pnr, userid, src, dest, train_no, date_journey, seat_no);
+    end if;
 end;
 
 -- procedure to cancel a ticket
@@ -179,20 +199,26 @@ modifies sql data
 begin
     if(not exists(select * from ticket as T where T.pnr = pnr)) then
         signal sqlstate '45000' set message_text = 'Invalid PNR number';
-    elseif((select T.status from ticket as T where T.pnr = pnr) <> 'WAITLISTED') then
-        signal sqlstate '45000' set message_text = 'Only CONFIRM tickets can be cancelled';
+    elseif((select T.status from ticket as T where T.pnr = pnr) = 'CANCELLED') then
+        signal sqlstate '45000' set message_text = 'Only CONFIRM/WAITLISTED tickets can be cancelled';
     else 
         update ticket as T
-        set T.status = 'CANCELLED'
+        set T.seat_no = NULL, T.status = 'CANCELLED'
         where T.pnr = pnr;
     end if;
 end;
 
 -- function to confirm a waitlisted ticket
-create or replace function confirm_ticket(pnr_ int, seat_no_ int)
+create or replace procedure confirm_ticket(pnr int, seat_no int)
 modifies sql data
 begin
-    update ticket as T
-    set T.status = 'CONFIRM', T.seat_no = seat_no_
-    where T.pnr = pnr_;
+    if(not exists(select * from ticket as T where T.pnr = pnr)) then
+        signal sqlstate '45000' set message_text = 'Invalid PNR number';
+    elseif((select status from ticket as T where T.pnr = pnr) <> 'WAITLISTED') then
+        signal sqlstate '45000' set message_text = 'Only WAITLISTED tickets can be confirmed';
+    else 
+        update ticket as T
+        set T.status = 'CONFIRM', T.seat_no = seat_no
+        where T.pnr = pnr;
+    end if;
 end;
