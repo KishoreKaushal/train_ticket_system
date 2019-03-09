@@ -96,10 +96,12 @@ begin
         signal sqlstate '45000' set message_text = 'Source station not valid for the given train';
     elseif(dest_idx is null) then
         signal sqlstate '45000' set message_text = 'Destination station not valid for the given train';
+    elseif(src_idx >= dest_idx) then 
+        signal sqlstate '45000' set message_text = 'Source cannot come after destination';
     elseif(exists (select *
                 from reservation as T
                 where T.train_no = train_no and T.journey_date = journey_date and T.seat_no = seat_no and
-                        ((T.src_idx <= dest_idx and T.src_idx >= src_idx) or (T.dest_idx <= dest_idx and T.dest_idx >= src_idx) or
+                        ((T.src_idx < dest_idx and T.src_idx > src_idx) or (T.dest_idx < dest_idx and T.dest_idx > src_idx) or
                         (T.src_idx <= src_idx and T.dest_idx >= dest_idx)))) then
                 return 0;
     else
@@ -189,20 +191,26 @@ modifies sql data
 begin
     if(not exists(select * from ticket as T where T.pnr = pnr)) then
         signal sqlstate '45000' set message_text = 'Invalid PNR number';
-    elseif((select T.status from ticket as T where T.pnr = pnr) <> 'WAITLISTED') then
-        signal sqlstate '45000' set message_text = 'Only CONFIRM tickets can be cancelled';
+    elseif((select T.status from ticket as T where T.pnr = pnr) = 'CANCELLED') then
+        signal sqlstate '45000' set message_text = 'Only CONFIRM/WAITLISTED tickets can be cancelled';
     else 
         update ticket as T
-        set T.status = 'CANCELLED'
+        set T.seat_no = NULL, T.status = 'CANCELLED'
         where T.pnr = pnr;
     end if;
 end;
 
 -- function to confirm a waitlisted ticket
-create or replace procedure confirm_ticket(pnr_ int, seat_no_ int)
+create or replace procedure confirm_ticket(pnr int, seat_no int)
 modifies sql data
 begin
-    update ticket as T
-    set T.status = 'CONFIRM', T.seat_no = seat_no_
-    where T.pnr = pnr_;
+    if(not exists(select * from ticket as T where T.pnr = pnr)) then
+        signal sqlstate '45000' set message_text = 'Invalid PNR number';
+    elseif((select status from ticket as T where T.pnr = pnr) <> 'WAITLISTED') then
+        signal sqlstate '45000' set message_text = 'Only WAITLISTED tickets can be confirmed';
+    else 
+        update ticket as T
+        set T.status = 'CONFIRM', T.seat_no = seat_no
+        where T.pnr = pnr;
+    end if;
 end;
