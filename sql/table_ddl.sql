@@ -62,14 +62,15 @@ CREATE OR REPLACE TABLE ticket (
   dest VARCHAR(5) NOT NULL ,
   status enum('CONFIRM', 'WAITLISTED', 'CANCELLED') NOT NULL ,
   train_no INT UNSIGNED NOT NULL ,
-  date_time_resv DATETIME NOT NULL ,
-  date_time_trav DATETIME NOT NULL ,
+  date_resv DATE NOT NULL ,
+  time_resv TIME NOT NULL ,
+  date_journey DATE NOT NULL ,
   seat_no INT UNSIGNED ,
   FOREIGN KEY (userid) REFERENCES user(userid) ,
   FOREIGN KEY (source) REFERENCES station(station_code) ,
   FOREIGN KEY (dest) REFERENCES station(station_code) ,
   FOREIGN KEY (train_no) REFERENCES train(train_no) ,
-  CHECK (date_time_resv < date_time_trav and pnr > 0 and (seat_no is not null or status <> 'CONFIRM'))
+  CHECK (date_resv < date_journey and pnr > 0 and (seat_no is not null or status <> 'CONFIRM'))
 );
 
 
