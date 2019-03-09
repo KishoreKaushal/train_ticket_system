@@ -12,16 +12,16 @@ CREATE OR REPLACE TABLE user (
 
 CREATE OR REPLACE TABLE station (
   station_code VARCHAR(5) NOT NULL PRIMARY KEY ,
-  station_name VARCHAR(50) NOT NULL UNIQUE  PRIMARY KEY (pnr) ,
+  station_name VARCHAR(50) NOT NULL UNIQUE ,
   city VARCHAR(50) NOT NULL
 );
 
 
 CREATE OR REPLACE TABLE train (
-  train_no INT UNSIGNED NOT NULL PRIMARY KEY ,  PRIMARY KEY (pnr) ,
+  train_no INT UNSIGNED NOT NULL PRIMARY KEY ,
   train_name VARCHAR(50) NOT NULL UNIQUE ,
-  source_st VARCHAR(5) NOT NULL UNIQUE ,
-  dest_st VARCHAR(5) NOT NULL UNIQUE ,
+  source_st VARCHAR(5) NOT NULL ,
+  dest_st VARCHAR(5) NOT NULL ,
   fare_per_km REAL UNSIGNED NOT NULL ,
   FOREIGN KEY (source_st) REFERENCES station(station_code) ,
   FOREIGN KEY (dest_st) REFERENCES station(station_code) ,
@@ -75,9 +75,9 @@ CREATE OR REPLACE TABLE ticket (
 
 CREATE OR REPLACE TABLE reservation (
   train_no INT UNSIGNED NOT NULL ,
-  seat_no INT UNSIGNED ,
+  seat_no INT UNSIGNED NOT NULL ,
   journey_date DATE NOT NULL ,
-  pnr BIGINT UNSIGNED NOT NULL ,
+  pnr BIGINT UNSIGNED NOT NULL UNIQUE,
   src_idx INT NOT NULL ,
   dest_idx INT NOT NULL ,
   PRIMARY KEY (train_no, seat_no, journey_date, src_idx) ,
