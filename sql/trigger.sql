@@ -6,9 +6,11 @@ begin
     if(new.stoppage_idx = 0) then
         if(not exists (select *
                        from train as T
-                       where (T.train_no = new.train_no and T.source_st = new.station_code))) then
+                       where (T.train_no = new.train_no))) then
             signal sqlstate '45000' set message_text = 'No such train exist';
-        else
+        elseif(new.station_code <> (select source_st from train as T where T.train_no = new.train_no)) then
+            signal sqlstate '45000' set message_text = 'Source station invalid';
+        else 
             set new.distance = 0;
         end if;
     else
@@ -22,13 +24,13 @@ begin
         else
             set new.distance = ((select T.distance
                                  from path as T
-                                 where T.train_no = new.train_no and T.stoppage_idx = (new.stoppage_idx - 1))
+                                 where (T.train_no = new.train_no and T.stoppage_idx = (new.stoppage_idx - 1)))
                                  +
                                 (select U.distance
                                  from neighbours as U
-                                 where U.st_b = new.station_code and U.st_a = (select T.station_code from
+                                 where (U.st_b = new.station_code and U.st_a = (select T.station_code from
                                                                                       path as T
-                                                                                      where T.train_no = train_no and T.stoppage_idx = (new.stoppage_idx - 1))));
+                                                                                      where T.train_no = new.train_no and T.stoppage_idx = (new.stoppage_idx - 1)))));
         end if;
     end if;
 end;

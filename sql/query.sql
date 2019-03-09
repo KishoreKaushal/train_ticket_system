@@ -29,7 +29,11 @@ begin
     set fare_per_km = (select T.fare_per_km from train as T where T.train_no = train_no);
     set dist_src = (select T.distance from path as T where T.train_no = train_no and T.station_code = src);
     set dist_dest = (select T.distance from path as T where T.train_no = train_no and T.station_code = dest);
-    return (dist_dest - dist_src) * fare_per_km;
+    if(fare_per_km is null or dist_src is null or dist_dest is null) then 
+        signal sqlstate '45000' set message_text = 'Invalid data';
+    else 
+        return (dist_dest - dist_src) * fare_per_km;
+    end if;
 end;
 
 -- function that returns the stoppage index of a station for a particular train
@@ -53,9 +57,14 @@ end;
 create or replace procedure train_details(in tr_no int)
 reads sql data
 begin
-    select stoppage_idx + 1, station_code, station_name, sched_arr, sched_dept, distance
-    from path natural join station
-    where train_no = tr_no;
+    if(not exists(select * from train where train_no = tr_no)) then
+        signal sqlstate '45500' set message_text = 'Invalid train number';
+    else 
+        select stoppage_idx + 1, station_code, station_name, sched_arr, sched_dept, distance
+        from path natural join station
+        where train_no = tr_no
+        order by stoppage_idx;
+    end if;
 end;
 
 -- procedure to display trains between any two particular stations
@@ -67,7 +76,8 @@ begin
     else 
         select V.train_no, V.train_name, T.sched_dept, U.sched_arr, (U.distance - T.distance) as distance_travelled, ((U.distance - T.distance) * V.fare_per_km) as total_fare
         from (path as T) join (path as U) using (train_no) natural join (train as V)
-        where T.station_code = src_st and U.station_code = dest_st and T.stoppage_idx < U.stoppage_idx and T.train_no = V.train_no;
+        where T.station_code = src_st and U.station_code = dest_st and T.stoppage_idx < U.stoppage_idx and T.train_no = V.train_no
+        order by T.sched_dept;
     end if;
 end;
 
