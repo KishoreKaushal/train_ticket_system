@@ -40,6 +40,15 @@ begin
     return (select stoppage_idx from path as T where T.train_no = train_no and T.station_code = station_code);
 end;
 
+-- procedure to display all the stations in a particular city
+create or replace procedure city_stations(in city varchar(50))
+reads sql data
+begin
+    select T.station_code, T.station_name
+    from station as T
+    where T.city = city;
+end;
+
 -- procedure to display the details of a particular train
 create or replace procedure train_details(in tr_no int)
 reads sql data
@@ -48,7 +57,6 @@ begin
     from path natural join station
     where train_no = tr_no;
 end;
-
 
 -- procedure to display trains between any two particular stations
 create or replace procedure train_between_stations(in src_st varchar(5), in dest_st varchar(5))
