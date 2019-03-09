@@ -181,8 +181,16 @@ end;
 create or replace procedure book_ticket(in pnr bigint unsigned, in userid varchar(50), in src varchar(5), in dest varchar(5), in train_no int, in date_journey date, in seat_no int unsigned)
 modifies sql data
 begin
-    insert into ticket(pnr, userid, source, dest, train_no, date_journey, seat_no)
-    values (pnr, userid, src, dest, train_no, date_journey, seat_no);
+    if(date_journey <= current_date) then 
+        signal sqlstate '45000' set message_text = 'Reservation should be done atleast one day before the date of journey';
+    elseif(datediff(date_journey, current_date) > 10) then 
+        signal sqlstate '45000' set message_text = 'Reservation is allowed for atmost 10 days in advance';
+    elseif(seat_no <= 0 or seat_no > 20) then
+        signal sqlstate '45000' set message_text = 'Seat number should be between 1 and 20';
+    else 
+        insert into ticket(pnr, userid, source, dest, train_no, date_journey, seat_no)
+        values (pnr, userid, src, dest, train_no, date_journey, seat_no);
+    end if;
 end;
 
 -- procedure to cancel a ticket

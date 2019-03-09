@@ -70,7 +70,8 @@ CREATE OR REPLACE TABLE ticket (
   FOREIGN KEY (source) REFERENCES station(station_code) ,
   FOREIGN KEY (dest) REFERENCES station(station_code) ,
   FOREIGN KEY (train_no) REFERENCES train(train_no) ,
-  CHECK (date_resv < date_journey and pnr > 0 and (seat_no is not null or status <> 'CONFIRM'))
+  CHECK (date_resv < date_journey and pnr > 0 and 
+         ((seat_no is not null and seat_no <= 20 and seat_no > 0) or (status <> 'CONFIRM' and seat_no is NULL)))
 );
 
 
