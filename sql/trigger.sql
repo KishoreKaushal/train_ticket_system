@@ -1,3 +1,4 @@
+delimiter //
 -- trigger on inserting new train data in path table
 create or replace trigger check_path_insert
 before insert on path
@@ -33,7 +34,7 @@ begin
                                                                                       where T.train_no = new.train_no and T.stoppage_idx = (new.stoppage_idx - 1)))));
         end if;
     end if;
-end;
+end //
 
 -- trigger on inserting new data in reservation table
 create or replace trigger check_reservation_insert
@@ -68,7 +69,8 @@ begin
         insert into reservation(train_no, seat_no, journey_date, pnr, src_idx, dest_idx)
         values (new.train_no, new.seat_no, new.date_journey, new.pnr, src_idx, dest_idx);
     end if;
-end;
+end //
+
 
 -- trigger for update on ticket table
 create or replace trigger check_ticket_update
@@ -88,4 +90,5 @@ begin
     else 
         signal sqlstate '45000' set message_text = 'Action not allowed';
     end if;
-end;
+end //
+delimiter ;
