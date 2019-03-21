@@ -23,23 +23,10 @@
 
         echo $dest.$src;
 
-        $sql = "select S.train_no as train_no, 
-                    S.source_st as source_station_code, 
-                    X.station_name as source_station_name, 
-                    S.dest_st as destination_station_code, 
-                    Y.station_name as destination_station_name,
-                    U.sched_arr as arrival_time, 
-                    V.sched_arr as destination_time, 
-                    calc_distance('".$src."', '".$dest."',S.train_no) as total_distance,
-                    (calc_distance('".$src."', '".$dest."',S.train_no) * S.fare_per_km) as fare
-                    from train as S 
-                    join path as U on (S.train_no = U.train_no)
-                    join path as V on (S.train_no = V.train_no)
-                    join station as X on (S.source_st = X.station_code)
-                    join station as Y on (S.dest_st = Y.station_code)
-                    where U.station_code = '".$src ."'and 
-                        V.station_code = '".$dest."' and
-                        U.stoppage_idx < V.stoppage_idx;";
+        $sql = "call train_between_stations('" . $src . "' , '" . $dest . "')";
+
+        echo $sql;
+
 
         $query_result = $DBcon_public->query($sql);
 
@@ -148,7 +135,7 @@
     <script>
         function validateSrcDestForm() {
             if($('#source').val() !== $("#destination").val()) {
-                alert("Source and destination are not same");
+                // alert("Source and destination are not same");
                 return true;
             } else {
                 alert("Source and destination can't be same");
@@ -254,23 +241,21 @@
                     echo "<table style='width:100%' sborder=2>";
                     echo "<tr>
                             <th>TrainNo.</th>
-                            <th>Src.</th>
-                            <th> Dest.</th>
-                            <th>Arr.</th>
-                            <th>Dest.</th>
+                            <th>TrainName</th>
+                            <th>SchedDept</th>
+                            <th>SchedArr</th>
                             <th>Dist.</th>
                             <th>Fare</th>
                         </tr>";
 
                     for ($i = 0; $i <sizeof($train_info) ; $i++) {
                         echo "<tr>".
-                                "<td>".$train_info[$i]['train_no']."</td> ".
-                                "<td>".$train_info[$i]['source_station_code']."</td> ".
-                                "<td>".$train_info[$i]['destination_station_code']."</td>".
-                                "<td>".$train_info[$i]['arrival_time']."</td>".
-                                "<td>".$train_info[$i]['destination_time']."</td>".
-                                "<td>".$train_info[$i]['total_distance']."</td>".
-                                "<td>".$train_info[$i]['fare']."</td>".
+                            "<td>" . $train_info[$i]['train_no'] . "</td> " .
+                            "<td>" . $train_info[$i]['train_name'] . "</td> " .
+                            "<td>" . $train_info[$i]['sched_dept'] . "</td>" .
+                            "<td>" . $train_info[$i]['sched_arr'] . "</td>" .
+                            "<td>" . $train_info[$i]['distance_travelled'] . "</td>" .
+                            "<td>" . $train_info[$i]['total_fare'] . "</td>" .
                             "</tr>";
                     }
 
