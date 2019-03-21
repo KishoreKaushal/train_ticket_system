@@ -1,3 +1,5 @@
+delimiter //
+
 -- function to return station name corresponding to a station code
 create or replace function station_code_name(station_code varchar(5))
 returns varchar(50)
@@ -6,7 +8,7 @@ begin
     return (select station_name 
             from station as T
             where T.station_code = station_code);
-end;
+end //
 
 -- function to return train name corresponding to a train number
 create or replace function train_no_name(train_no int unsigned)
@@ -16,7 +18,7 @@ begin
     return (select train_name 
             from train as T 
             where T.train_no = train_no);
-end;
+end //
 
 -- function that returns the total fare of a train from a given station to another station
 create or replace function calculate_fare(train_no int unsigned, src varchar(5), dest varchar(5))
@@ -34,7 +36,7 @@ begin
     else 
         return (dist_dest - dist_src) * fare_per_km;
     end if;
-end;
+end //
 
 -- function that returns the stoppage index of a station for a particular train
 create or replace function station_code_index(train_no int, station_code varchar(5))
@@ -42,7 +44,7 @@ returns integer
 reads sql data
 begin
     return (select stoppage_idx from path as T where T.train_no = train_no and T.station_code = station_code);
-end;
+end //
 
 -- procedure to display all the stations in a particular city
 create or replace procedure city_stations(in city varchar(50))
@@ -51,7 +53,7 @@ begin
     select T.station_code, T.station_name
     from station as T
     where T.city = city;
-end;
+end //
 
 -- procedure to display the details of a particular train
 create or replace procedure train_details(in tr_no int)
@@ -65,7 +67,7 @@ begin
         where train_no = tr_no
         order by stoppage_idx;
     end if;
-end;
+end //
 
 -- procedure to display trains between any two particular stations
 create or replace procedure train_between_stations(in src_st varchar(5), in dest_st varchar(5))
@@ -79,7 +81,7 @@ begin
         where T.station_code = src_st and U.station_code = dest_st and T.stoppage_idx < U.stoppage_idx and T.train_no = V.train_no
         order by T.sched_dept;
     end if;
-end;
+end //
 
 -- function to check whether a seat is available between any two given stations for a given date and train
 create or replace function check_seat_available(train_no int, journey_date date, seat_no int, src_st varchar(5), dest_st varchar(5))
@@ -107,7 +109,7 @@ begin
     else
         return 1;
     end if;
-end;
+end //
 
 -- procedure that displays status of a seat for a given train, journey date
 create or replace procedure seat_info(in train_no int, in journey_date date, in seat_no int)
@@ -121,7 +123,7 @@ begin
         where T.train_no = train_no and T.journey_date = journey_date and T.seat_no = seat_no
         order by T.src_idx;
     end if;
-end;
+end //
 
 -- procedure to display all waitlisted tickets for a given train on a given date
 create or replace procedure waitlisted_status(in train_no int, in journey_date date) 
@@ -131,7 +133,7 @@ begin
     from ticket as T 
     where T.train_no = train_no and T.date_journey = journey_date and status = 'WAITLISTED'
     order by date_resv, time_resv;
-end;
+end //
 
 -- procedure to display the details of a booked ticket
 create or replace procedure pnr_info(in pnr bigint unsigned)
@@ -144,7 +146,7 @@ begin
         from (ticket as T) natural join (train as U)
         where T.pnr = pnr;
     end if;
-end;
+end //
 
 -- procedure to display the booking history of a user
 create or replace procedure booking_history(in userid varchar(50))
@@ -160,7 +162,7 @@ begin
         where T.userid = userid
         order by date_resv, time_resv;
     end if;
-end;
+end //
 
 -- procedure to show the details of a user
 create or replace procedure user_info(in userid varchar(50))
@@ -175,7 +177,7 @@ begin
         from user as T
         where T.userid = userid;
     end if;
-end;
+end //
 
 -- procedure to book a ticket
 create or replace procedure book_ticket(in pnr bigint unsigned, in userid varchar(50), in src varchar(5), in dest varchar(5), in train_no int, in date_journey date, in seat_no int unsigned)
@@ -191,7 +193,7 @@ begin
         insert into ticket(pnr, userid, source, dest, train_no, date_journey, seat_no)
         values (pnr, userid, src, dest, train_no, date_journey, seat_no);
     end if;
-end;
+end //
 
 -- procedure to cancel a ticket
 create or replace procedure cancel_ticket(in pnr bigint unsigned)
@@ -206,7 +208,7 @@ begin
         set T.seat_no = NULL, T.status = 'CANCELLED'
         where T.pnr = pnr;
     end if;
-end;
+end //
 
 -- function to confirm a waitlisted ticket
 create or replace procedure confirm_ticket(pnr int, seat_no int)
@@ -221,4 +223,6 @@ begin
         set T.status = 'CONFIRM', T.seat_no = seat_no
         where T.pnr = pnr;
     end if;
-end;
+end //
+
+delimiter ;

@@ -102,7 +102,7 @@ create procedure all_trains (in source varchar (50), in destination varchar(50))
         U.stoppage_idx < V.stoppage_idx;
   end;
 //
-delimiter ;
+delimiter show ;
 
 
 

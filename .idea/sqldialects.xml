@@ -3,5 +3,7 @@
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/sql/TRAIN_table_CREAT.sql" dialect="MariaDB" />
     <file url="file://$PROJECT_DIR$/sql/booking_table.sql" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/sql/query.sql" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/sql/train_ticket_system_kk.sql" dialect="MariaDB" />
   </component>
 </project>
