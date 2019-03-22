@@ -1,5 +1,21 @@
 <?php
+    require_once "./utility/dbconnect_public.php";
+    $sql = "select distinct station_code , station_name from station;";
 
+    $st_code_arr = array();
+    $st_name_arr = array();
+
+    $train_info = array();
+    $trains_found = NULL;
+
+
+    $query_result = $DBcon_public->query($sql);
+    while ($row = $query_result->fetch_array()){
+        array_push($st_code_arr, $row[0]);
+        array_push($st_name_arr, $row[1]);
+    }
+
+    $DBcon_public->close();
 ?>
 
 <!DOCTYPE html>
@@ -12,6 +28,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="./js/main.js"></script>
 
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -140,22 +157,43 @@
     </h1>
 
     <div class="w3-panel w3-card-2">
-        <form class="form-book-ticket">
-            <div class="form-group row">
-                <label for="" class="">From</label>
-                <div>
-                    <input type="text" class="form-control-plaintext" id="staticEmail2" value="email@example.com">
-                </div>
-                
-            </div>
-            <div class="form-group mx-sm-3">
-                <label for="inputPassword2" class="sr-only">Password</label>
-                <input type="password" class="form-control" id="inputPassword2" placeholder="Password">
-            </div>
-            <button type="submit" class="btn btn-primary mb-2">Confirm identity</button>
-        </form>    
-    </div>
+        <form class="form-book-ticket" onsubmit="return validateSrcDestForm()" method="post"
+              action=<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>>
 
+            <div class="form-group row">
+                <label for="source">Source: </label>
+                <div>
+                    <select name="source" id="source">
+                        <?php
+                        for ($i=0; $i < sizeof($st_code_arr); $i = $i + 1) {
+                            echo ("<option value='" . $st_code_arr[$i] . "'>". $st_name_arr[$i] ."</option>");
+                        }
+                        ?>
+                    </select>
+                </div>
+
+            </div>
+
+
+            <div class="form-group row">
+                <label for="destination">Destination: </label>
+                <div>
+                    <select name="destination" id="destination">
+                        <?php
+                        for ($i=0; $i < sizeof($st_code_arr); $i = $i + 1) {
+                            echo ("<option value='" . $st_code_arr[$i] . "'>". $st_name_arr[$i] ."</option>");
+                        }
+                        ?>
+                    </select>
+                </div>
+
+            </div>
+            <div class="col-sm-2" style="padding-top:10px">
+                <input id="btn-findtrains" class="btn btn-primary btn-block" type="submit">Find Trains</button>
+            </div>
+
+        </form>
+    </div>
     
 </div>
 
