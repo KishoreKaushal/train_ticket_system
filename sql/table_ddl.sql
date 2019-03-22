@@ -88,3 +88,6 @@ CREATE OR REPLACE TABLE reservation (
   FOREIGN KEY (train_no, dest_idx) references path(train_no, stoppage_idx) ,
   check (seat_no > 0 and src_idx < dest_idx)
 );
+
+ALTER TABLE user
+  DROP COLUMN IF EXISTS password_hash;
