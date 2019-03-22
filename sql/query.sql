@@ -62,7 +62,7 @@ begin
     if(not exists(select * from train where train_no = tr_no)) then
         signal sqlstate '45500' set message_text = 'Invalid train number';
     else 
-        select stoppage_idx + 1, station_code, station_name, sched_arr, sched_dept, distance
+        select (stoppage_idx + 1) as stop_idx, station_code, station_name, sched_arr, sched_dept, distance
         from path natural join station
         where train_no = tr_no
         order by stoppage_idx;
