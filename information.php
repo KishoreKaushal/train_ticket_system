@@ -1,13 +1,11 @@
 <?php
     require_once "./utility/dbconnect_public.php"; 
     $sql = "select distinct station_code , station_name from station;";
-    
+
     $st_code_arr = array();
     $st_name_arr = array();
-    
-    $train_info = array();
+    $train_between_stations = array();
     $trains_found = NULL;
-
 
     $query_result = $DBcon_public->query($sql);
     while ($row = $query_result->fetch_array()){
@@ -15,29 +13,44 @@
         array_push($st_name_arr, $row[1]);
     }
 
+    $sql = "select distinct train_no, train_name from train;";
 
-    if (!empty($_POST)) {
-        
-        $dest = $DBcon_public->real_escape_string(strip_tags($_POST['destination'])); 
-        $src = $DBcon_public->real_escape_string(strip_tags($_POST['source'])); 
+    $train_code_arr = array();
+    $train_name_arr = array();
+    $train_info = array();
 
-        echo $dest.$src;
-
-        $sql = "call train_between_stations('" . $src . "' , '" . $dest . "')";
-
-        echo $sql;
-
-
-        $query_result = $DBcon_public->query($sql);
-
-        while ($row = $query_result->fetch_array()){
-           array_push($train_info, $row);
-        }
-
-        $trains_found = true;
+    $query_result = $DBcon_public->query($sql);
+    while ($row = $query_result->fetch_array()){
+        array_push($train_code_arr, $row[0]);
+        array_push($train_name_arr, $row[1]);
     }
 
-        
+    if (!empty($_POST)) {
+        if (isset($_POST['destination'], $_POST['source'])){
+            $dest = $DBcon_public->real_escape_string(strip_tags($_POST['destination']));
+            $src = $DBcon_public->real_escape_string(strip_tags($_POST['source']));
+
+            $sql = "call train_between_stations('" . $src . "' , '" . $dest . "')";
+
+            $query_result = $DBcon_public->query($sql);
+
+            while ($row = $query_result->fetch_array()){
+                array_push($train_between_stations, $row);
+            }
+
+            $trains_found = true;
+        } else if (isset($_POST['trainNum'])){
+
+            $train_number = $DBcon_public->real_escape_string(strip_tags($_POST['trainNum']));
+            $sql = "call train_details(" . $train_number . ")";
+
+            $query_result = $DBcon_public->query($sql);
+
+            while ($row = $query_result->fetch_array()){
+                array_push($train_info, $row);
+            }
+        }
+    }
 
     $DBcon_public->close();
 ?>
@@ -144,6 +157,13 @@
         }
     </script>
 
+    <?php
+        if (isset($_POST['trainNum'])){
+            echo "<script>$(function(){ $('#nav-train-info').click(); });</script>";
+        }
+
+    ?>
+
 </head>
 
 <body>
@@ -195,18 +215,16 @@
 
     <ul class="nav nav-tabs">
         <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#findTrains">Find trains</a>
+            <a id="nav-find-trains" class="nav-link active" data-toggle="tab" href="#findTrains">Find trains</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#trainInfo">Train Info</a>
+            <a id="nav-train-info" class="nav-link" data-toggle="tab" href="#trainInfo">Train Info</a>
         </li>
     </ul>
 
 
     <div class="tab-content">
         <div class="tab-pane container active" id="findTrains">
-            <h3>Let's find some train.</h3>
-            <br/>
 
             <form action= <?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?> onsubmit="return validateSrcDestForm()" method="post">
 
@@ -235,9 +253,9 @@
             </form>
 
             <?php
-                if (sizeof($train_info) != 0) {
+                if (sizeof($train_between_stations) != 0) {
 
-                    // echo json_encode($train_info);
+                    // echo json_encode($train_between_stations);
                     echo "<table style='width:100%' sborder=2>";
                     echo "<tr>
                             <th>TrainNo.</th>
@@ -248,14 +266,14 @@
                             <th>Fare</th>
                         </tr>";
 
-                    for ($i = 0; $i <sizeof($train_info) ; $i++) {
+                    for ($i = 0; $i <sizeof($train_between_stations) ; $i++) {
                         echo "<tr>".
-                            "<td>" . $train_info[$i]['train_no'] . "</td> " .
-                            "<td>" . $train_info[$i]['train_name'] . "</td> " .
-                            "<td>" . $train_info[$i]['sched_dept'] . "</td>" .
-                            "<td>" . $train_info[$i]['sched_arr'] . "</td>" .
-                            "<td>" . $train_info[$i]['distance_travelled'] . "</td>" .
-                            "<td>" . $train_info[$i]['total_fare'] . "</td>" .
+                            "<td>" . $train_between_stations[$i]['train_no'] . "</td> " .
+                            "<td>" . $train_between_stations[$i]['train_name'] . "</td> " .
+                            "<td>" . $train_between_stations[$i]['sched_dept'] . "</td>" .
+                            "<td>" . $train_between_stations[$i]['sched_arr'] . "</td>" .
+                            "<td>" . $train_between_stations[$i]['distance_travelled'] . "</td>" .
+                            "<td>" . $train_between_stations[$i]['total_fare'] . "</td>" .
                             "</tr>";
                     }
 
@@ -266,7 +284,53 @@
             ?>
 
         </div>
-        <div class="tab-pane container fade" id="trainInfo">Let's find train information for you.</div>
+        <div class="tab-pane container fade" id="trainInfo">
+            <form action= <?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?> onsubmit="return true" method="post">
+                <label for="trainNum">Train Name: </label>
+                <select name="trainNum" id="trainNum">
+                    <?php
+                        for ($i=0; $i < sizeof($train_code_arr); $i = $i + 1) {
+                            $train_name = $train_code_arr[$i] . " - " . $train_name_arr[$i];
+                            echo ("<option value='" . $train_code_arr[$i] . "'>". $train_name ."</option>");
+                        }
+                    ?>
+                </select>
+
+                <div class="col-sm-2" style="padding-top:10px">
+                    <input id="btn-traininfo" class="btn btn-primary btn-block" type="submit">Get Train Info</button>
+                </div>
+            </form>
+
+            <?php
+                if (sizeof($train_info) != 0) {
+
+                    echo "<table style='width:100%' sborder=2>";
+                    echo "<tr>
+                                <th>StopIdx</th>
+                                <th>StnCode</th>
+                                <th>StnName</th>
+                                <th>SchedArr</th>
+                                <th>SchedDept</th>
+                                <th>Dist</th>
+                            </tr>";
+
+                    for ($i = 0; $i <sizeof($train_info) ; $i++) {
+                        echo "<tr>".
+                            "<td>" . $train_info[$i]['stop_idx'] . "</td> " .
+                            "<td>" . $train_info[$i]['station_code'] . "</td> " .
+                            "<td>" . $train_info[$i]['station_name'] . "</td>" .
+                            "<td>" . $train_info[$i]['sched_arr'] . "</td>" .
+                            "<td>" . $train_info[$i]['sched_dept'] . "</td>" .
+                            "<td>" . $train_info[$i]['distance'] . "</td>" .
+                            "</tr>";
+                    }
+
+                    echo "</table>";
+                } else if(isset($_POST['trainNum'])) {
+                    echo "<h1>Unknown Error</h1>";
+                }
+            ?>
+        </div>
     </div>
 
 
