@@ -34,7 +34,7 @@ function validateUsername(username) {
 }
 
 function validateName(name) {
-    var nameRegExp = //;
+    var nameRegExp = /[a-zA-Z]{1,100}/;
     return nameRegExp.test(name);
 }
 
