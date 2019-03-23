@@ -1,15 +1,14 @@
 <?php
 session_start();
 /* temp session value */
-$_SESSION['ref'] = 'spike'; 
+//$_SESSION['ref'] = 'spike';
 
 if(isset($_POST['button'])) {
-    print_r($_FILES);    
-    $dir = "./uploads/";
-    $file = "ref_" . $_SESSION['ref'];
-    $path = $dir . $file . ".jpg";
-    
-    move_uploaded_file($_FILES['myFile']['tmp_name'], $path);
+    if (move_uploaded_file($_FILES['myFile']['tmp_name'], __DIR__.'/uploads/'. $_FILES["myFile"]['name'])) {
+        echo "Uploaded";
+    } else {
+        echo "File was not uploaded";
+    }
 }
 ?>
 <form action="?" method="post"  enctype="multipart/form-data"><fieldset>
