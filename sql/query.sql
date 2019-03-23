@@ -225,4 +225,16 @@ begin
     end if;
 end //
 
+-- procedure to find out list of available seats
+create or replace procedure available_seat_list(in train_no int, in journey_date date, in src_st varchar(5), in dest_st varchar(5))
+reads sql data 
+begin 
+    select seat_no from seat_list 
+        where  (select check_seat_available(train_no, journey_date, seat_no, src_st, dest_st)) = 1;
+
+end //
+
+-- select seat_no from seat_list where (select check_seat_available(12457, '2019-03-23', 1, 'CAPE', 'TPJ')) = 1
+
 delimiter ;
+
