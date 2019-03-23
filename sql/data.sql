@@ -140,3 +140,21 @@ insert into path(train_no, station_code, sched_arr, sched_dept, stoppage_idx) va
 (12457, 'MDU', '13:35:00', '13:40:00', 2),
 (12457, 'TPJ', '15:10:00', '15:15:00', 3),
 (12457, 'MAS', '19:00:00', '19:30:00', 4);
+
+CREATE OR REPLACE TABLE seat_list (
+  seat_no INT UNSIGNED NOT NULL
+  primary key
+);
+
+DELIMITER //
+
+CREATE OR REPLACE PROCEDURE proc_seat_insert(p1 INT)
+  BEGIN
+    SET @x = 0;
+    REPEAT SET @x = @x + 1; insert into seat_list (seat_no) values (@x);  UNTIL @x >= p1 END REPEAT;
+  END
+//
+
+CALL proc_seat_insert(20)//
+
+delimiter ;

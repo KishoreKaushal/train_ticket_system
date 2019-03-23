@@ -1,7 +1,3 @@
-<?php
-    // require_once "./utility/dbconnect_public.php";
-?>
-
 <!DOCTYPE html>
 <html>
 <title>Train System</title>
@@ -87,7 +83,7 @@
         <div class="navigation collapse navbar-collapse" id="navbarCollapse">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+              <a class="nav-link" href="./index.php">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">Booking</a>
@@ -96,7 +92,7 @@
               <a class="nav-link" href="./information.php">Information</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">My Profile</a>
+              <a class="nav-link" href="./profile.php">My Profile</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">Contact Us</a>
@@ -122,19 +118,67 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-6" style = "width: 30%">
-            <img src="img/gates.jpg">
-            <form action="/uploadImage.php" >
-                <input type="image" src="img_submit.gif" alt="Submit"> 
+            <img src=
+              <?php 
+                require_once "./utility/dbconnect_user.php";     
+                $img_dir = "img/" . $DBuser . "/";
+                $file_list = scandir($img_dir);
+                $img_src = "";
+                if (sizeof ($file_list) == 1) {
+                  $img_src = $img_dir . $file_list[0];
+                  
+                } else {
+                  $img_src = "./img/gates.jpg";
+                }
+                echo '"' . $img_src . '"';
+                $DBcon->close();
+              ?>
+              alt="img/gates.jpg"
+            >
+            <form action="./utility/upload_image.php" method="post" enctype="multipart/form-data">
+                <br><br>Select image to upload:<br>
+                <input type="file" name="fileToUpload" id="fileToUpload"><br>
+                <input type="submit" value="Upload Image" name="submit"><br>
             </form>
         </div>
         <div class="col-sm-6" style = "width = 70%">
-        <form action="/action_page.php" method="get">
-            Current Password: <input type="text" name="oldP"><br>
-            New Password: &emsp; <input type="text" name="newP"><br>
-            Confirm Password:<input type="text" name="conP"><br>
-            <input type="submit" value="Submit">
+        <form action="./utility/change_pass.php" method="get">
+            <div class="container">
+              <div class="row">
+                <div class="col-sm-6" style = "width: 50%; border:2px solid black;">
+                  Current Password: <br>
+                  New Password: <br>
+                  Confirm Password: <br>
+                </div>
+                <div class="col-sm-6" style = "width: 50%; border:2px solid black;">
+                  <input type="text" name="oldP"><br>
+                  <input type="text" name="newP"><br>
+                  <input type="text" name="conP"><br>
+                </div>
+              </div>
+            </div>
+            &emsp; &emsp; <input type="submit" value="Submit">
         </form> 
-
+        <br><br>
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-6" style = "width: 50%; border:2px solid black;">
+              Username <br>
+              Aadhar number <br>
+              Contact number <br>
+            </div>
+            <div class="col-sm-6" style = "width: 50%; border:2px solid black;">
+              <?php 
+                require_once "./utility/dbconnect_user.php";    
+                $sql = "select name, aadhar_no, contact_no from user where userid = " . $DBuser;
+                $query_result = $DBcon->query($sql);
+                $row = $query_result -> fetch_array();
+                echo $row[0] . "<br>" . $row[1] . "<br>" . $row[2] . "<br>";
+                $DBcon->close();
+              ?>
+            </div>
+          </div>
+        </div>
          
         </div>
     </div>
