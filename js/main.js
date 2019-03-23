@@ -27,7 +27,7 @@ function validatePassword(passwd) {
 
 function validateUsername(username) {
     if (typeof(username) === "string") {
-        var usernameRegExp = /([A-Za-z_0-9]+){4,}/;
+        var usernameRegExp = /([A-Za-z_0-9]+){3,}/;
         return usernameRegExp.test(username);
     } else return false;
     return true;
