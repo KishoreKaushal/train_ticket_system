@@ -1,7 +1,3 @@
-<?php
-    // require_once "./utility/dbconnect_public.php";
-?>
-
 <!DOCTYPE html>
 <html>
 <title>Train System</title>
@@ -122,10 +118,34 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-6" style = "width: 30%">
-            <img src="img/gates.jpg">
-            <form action="/uploadImage.php" >
-                <input type="image" src="img_submit.gif" alt="Submit"> 
+            <img src=
+              <?php 
+                require_once "./utility/dbconnect_user.php";     
+                $img_dir = "img/" . $DBuser;
+                $file_list = scandir($img_dir);
+                $img_src = "";
+                if (file_list.size() >= 1) {
+                  $img_src = "./img/";
+                } else if () {
+                  
+                } else {
+
+                }
+                
+                $DBcon->close();
+              ?>
+            >
+            <form action="upload.php" method="post" enctype="multipart/form-data">
+                <br>Select image to upload:<br>
+                <input type="file" name="fileToUpload" id="fileToUpload">
+                <br>
+                <input type="submit" value="Upload Image" name="submit">
             </form>
+            <!-- <?php
+              require_once "./utility/dbconnect_user.php";
+              
+              $DBcon->close();
+            ?> -->
         </div>
         <div class="col-sm-6" style = "width = 70%">
         <form action="/action_page.php" method="get">
