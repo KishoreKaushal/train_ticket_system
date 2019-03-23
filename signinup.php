@@ -81,14 +81,20 @@
                     console.log("i m here");
 
                     var username = $('#signup-username').val();
-                    var email = $('#signup-email').val();
+                    var name = $('#signup-name').val();
+                    var aadhar = $('#signup-aadhar').val();
+                    var contact = $('#signup-contact').val();
                     var password = $('#signup-password').val();
                     var confPassword = $('#signup-conf-password').val();
                     
                     if (!validateUsername(username)){
                         alert('Enter a valid user.');
-                    } else if (!validateEmail(email)) {
-                        alert('Enter a valid email.');
+                    } else if (!validateName(name)){
+                        alert('Enter a valid name.');
+                    } else if (!validateEmail(aadhar)) {
+                        alert('Enter a valid 12-Digit aadhar number.');
+                    } else if (!validateContact(contact)){
+                        alert('Enter a valid contact number.');
                     } else if (password !== confirmPassword) {
                         alert('Passwords do not match.');
                     } else if (!validatePassword(password)) {
@@ -121,6 +127,14 @@
 
         </script>        
 
+        <style>
+            input[type=number]::-webkit-inner-spin-button,
+            input[type=number]::-webkit-outer-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+        </style>
+
     </head>
 
     <body>
@@ -136,16 +150,24 @@
                             <h5 class="card-title text-center">Register</h5>
                             <form class="form-signin">
                                 <div class="form-label-group">
-                                    <input type="text" id="signup-username" class="form-control" placeholder="Username" required autofocus>
+                                    <input type="text" id="signup-username" class="form-control" placeholder="Unique identification name" required autofocus>
                                     <label for="signup-username">Username</label>
                                 </div>
 
                                 <div class="form-label-group">
-                                    <input type="email" id="signup-email" class="form-control" placeholder="Email address" required>
-                                    <label for="signup-email">Email address</label>
+                                    <input type="text" id="signup-name" class="form-control" placeholder="What we may call you?" required>
+                                    <label for="signup-name">Your Name</label>
                                 </div>
 
-                                
+                                <div class="form-label-group">
+                                    <input type="number" id="signup-aadhar" class="form-control" placeholder="12 Digit Aadhar Number" required>
+                                    <label for="signup-aadhar">12-Digit Aadhar</label>
+                                </div>
+
+                                <div class="form-label-group">
+                                    <input type="text" id="signup-contact" class="form-control" placeholder="To contact you." required>
+                                    <label for="signup-contact">Contact Info</label>
+                                </div>
 
                                 <div class="form-label-group">
                                     <input type="password" id="signup-password" class="form-control" placeholder="Password" required>

@@ -27,13 +27,25 @@ function validatePassword(passwd) {
 
 function validateUsername(username) {
     if (typeof(username) === "string") {
-        var usernameRegExp = /[A-Za-z_0-9]+/;
-        if (usernameRegExp.test(username) == false || username.length < 4) {
-            return false;
-        }
+        var usernameRegExp = /([A-Za-z_0-9]+){4,}/;
+        return usernameRegExp.test(username);
     } else return false;
-
     return true;
+}
+
+function validateName(name) {
+    var nameRegExp = //;
+    return nameRegExp.test(name);
+}
+
+function validateAadhar(aadhar) {
+    var aadharRegExp = /[0-9]{12}/;
+    return aadharRegExp.test(aadhar) ;
+}
+
+function validateContact(contact) {
+    var contactRegExp = /([+]?)[0-9]{0,20}/;
+    return contactRegExp.test(contact);
 }
 
 function validateSrcDestForm() {

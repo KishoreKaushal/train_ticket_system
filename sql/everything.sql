@@ -2493,4 +2493,4 @@ USE `train_ticket_system`;
 
 -- Dump completed on 2019-03-23  1:17:04
 
-mysqldump --all-databases --routines --triggers -u root -p > everything.sql
+mysqldump --all-databases --routines --triggers -u root -p > everything.sql;
