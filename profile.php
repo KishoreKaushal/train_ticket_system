@@ -133,6 +133,7 @@
                 echo '"' . $img_src . '"';
                 $DBcon->close();
               ?>
+              alt="img/gates.jpg"
             >
             <form action="./utility/upload_image.php" method="post" enctype="multipart/form-data">
                 <br><br>Select image to upload:<br>
@@ -152,7 +153,10 @@
             Confirm Password:<input type="text" name="conP"><br>
             <input type="submit" value="Submit">
         </form> 
-
+        <br><br>
+        <div class="container">
+          <div 
+        </div>
          
         </div>
     </div>
