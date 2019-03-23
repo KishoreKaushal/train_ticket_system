@@ -85,32 +85,37 @@
                     var aadhar = $('#signup-aadhar').val();
                     var contact = $('#signup-contact').val();
                     var password = $('#signup-password').val();
-                    var confPassword = $('#signup-conf-password').val();
+                    var confirmPassword = $('#signup-conf-password').val();
+                    console.log(aadhar);
                     
                     if (!validateUsername(username)){
                         alert('Enter a valid user.');
                     } else if (!validateName(name)){
                         alert('Enter a valid name.');
-                    } else if (!validateEmail(aadhar)) {
+                    } else if (!validateAadhar(aadhar)) {
                         alert('Enter a valid 12-Digit aadhar number.');
                     } else if (!validateContact(contact)){
                         alert('Enter a valid contact number.');
                     } else if (password !== confirmPassword) {
                         alert('Passwords do not match.');
-                    } else if (!validatePassword(password)) {
-                        alert('Password [6 to 20 characters which contain at least one numeric digit, one uppercase and one lowercase letter]');
-                    } else {
+                    }
+                    // else if (!validatePassword(password)) {
+                    //     alert('Password [6 to 20 characters which contain at least one numeric digit, one uppercase and one lowercase letter]');
+                    // }
+                    else {
                     
                         var signUpData = {
                             "username" 	: username,
-                            "email"     : email,
-                            "password"  : password                        
+                            "name"      : name,
+                            "aadhar"    : aadhar,
+                            "contact"   : contact,
+                            "password"  : password
                         };
 
                         $.ajax({
                             type	: 'POST',
                             url		: 'http://localhost/train_ticket_system/utility/register.php',
-                            data	: {request : JSON.stringify(signUpData)},
+                            data	: {signup_credentials : JSON.stringify(signUpData)},
                             success	: function(response){
                                 response = JSON.parse(response);
                                 console.log(response);
