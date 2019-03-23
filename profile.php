@@ -121,21 +121,20 @@
             <img src=
               <?php 
                 require_once "./utility/dbconnect_user.php";     
-                $img_dir = "img/" . $DBuser;
+                $img_dir = "img/" . $DBuser . "/";
                 $file_list = scandir($img_dir);
                 $img_src = "";
-                if (file_list.size() >= 1) {
-                  $img_src = "./img/";
-                } else if () {
+                if (sizeof ($file_list) == 1) {
+                  $img_src = $img_dir . $file_list[0];
                   
                 } else {
-
+                  $img_src = "./img/gates.jpg";
                 }
-                
+                echo '"' . $img_src . '"';
                 $DBcon->close();
               ?>
             >
-            <form action="upload.php" method="post" enctype="multipart/form-data">
+            <form action="./utility/upload_img.php" method="post" enctype="multipart/form-data">
                 <br>Select image to upload:<br>
                 <input type="file" name="fileToUpload" id="fileToUpload">
                 <br>
