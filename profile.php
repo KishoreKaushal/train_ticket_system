@@ -135,9 +135,8 @@
               ?>
             >
             <form action="./utility/upload_img.php" method="post" enctype="multipart/form-data">
-                <br>Select image to upload:<br>
+                Select image to upload:
                 <input type="file" name="fileToUpload" id="fileToUpload">
-                <br>
                 <input type="submit" value="Upload Image" name="submit">
             </form>
             <!-- <?php
