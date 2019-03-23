@@ -1,12 +1,19 @@
 <?php
 require_once "./dbconnect_user.php";     
 
+echo "<br>";
+echo $username;
+echo $password;
+echo "<br>";
+
 $target_dir = "../img/" . $DBuser . "/";
 // $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
 $file_name = basename($_FILES["fileToUpload"]["name"]);
 $uploadOk = 1;
 $imageFileType = strtolower(pathinfo($file_name,PATHINFO_EXTENSION));
-$target_file = "profile_img." . $imageFileType;
+$target_file = $target_dir . "profile_img." . $imageFileType;
+
+echo $target_file;
 
 // Check if image file is a actual image or fake image
 if(isset($_POST["submit"])) {
@@ -19,7 +26,7 @@ if(isset($_POST["submit"])) {
         $uploadOk = 0;
     }
 }
-if ($_FILES["fileToUpload"]["size"] > 500000) {
+if ($_FILES["fileToUpload"]["size"] > 2000000) {
     echo "Sorry, your file is too large.";
     $uploadOk = 0;
 }

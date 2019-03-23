@@ -134,10 +134,10 @@
                 $DBcon->close();
               ?>
             >
-            <form action="./utility/upload_img.php" method="post" enctype="multipart/form-data">
-                Select image to upload:
-                <input type="file" name="fileToUpload" id="fileToUpload">
-                <input type="submit" value="Upload Image" name="submit">
+            <form action="./utility/upload_image.php" method="post" enctype="multipart/form-data">
+                <br><br>Select image to upload:<br>
+                <input type="file" name="fileToUpload" id="fileToUpload"><br>
+                <input type="submit" value="Upload Image" name="submit"><br>
             </form>
             <!-- <?php
               require_once "./utility/dbconnect_user.php";
