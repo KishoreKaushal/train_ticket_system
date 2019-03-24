@@ -73,6 +73,7 @@ CREATE OR REPLACE TABLE ticket (
   CHECK (date_resv < date_journey and pnr > 0 and 
          ((seat_no is not null and seat_no <= 20 and seat_no > 0) or (status <> 'CONFIRM' and seat_no is NULL)))
 );
+alter table ticket modify column pnr varchar(50) not null;
 
 
 CREATE OR REPLACE TABLE reservation (
@@ -88,6 +89,8 @@ CREATE OR REPLACE TABLE reservation (
   FOREIGN KEY (train_no, dest_idx) references path(train_no, stoppage_idx) ,
   check (seat_no > 0 and src_idx < dest_idx)
 );
+alter table reservation modify column pnr varchar(50) not null;
+alter table reservation add foreign key (pnr) references ticket(pnr);
 
 ALTER TABLE user
   DROP COLUMN IF EXISTS password_hash;
