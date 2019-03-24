@@ -12,6 +12,16 @@
     }
 
     $img_src = "'" . $img_src . "'";
+
+    $username = $_SESSION['username'];
+    $password = $_SESSION['password'];
+    require_once "./utility/dbconnect_user.php";
+
+    $sql = "select * from user where userid='$username'";
+    $query_result = $DBcon->query($sql);
+    $user_details = $query_result->fetch_array();
+
+    $DBcon->close();
 ?>
 
 <!DOCTYPE html>
@@ -161,23 +171,22 @@
         </form> 
         <br><br>
         <div class="container">
-          <div class="row">
-            <div class="col-sm-6" style = "width: 50%; border:2px solid black;">
-              Username <br>
-              Aadhar number <br>
-              Contact number <br>
+            <div class="row">
+                <div class="col-sm-6" style = "width: 50%; border:2px solid black;">
+                    Userid <br>
+                    Name <br>
+                    Aadhar number <br>
+                    Contact number <br>
+                </div>
+                <div class="col-sm-6" style = "width: 50%; border:2px solid black;">
+                    <?php
+                        echo $user_details['userid']." <br/>";
+                        echo $user_details['name']." <br/>";
+                        echo $user_details['aadhar_no']." <br/>";
+                        echo $user_details['contact_no']." <br/>";
+                    ?>
+                </div>
             </div>
-            <div class="col-sm-6" style = "width: 50%; border:2px solid black;">
-              <?php 
-                require_once "./utility/dbconnect_user.php";    
-                $sql = "select name, aadhar_no, contact_no from user where userid = " . $DBuser;
-                $query_result = $DBcon->query($sql);
-                $row = $query_result -> fetch_array();
-                echo $row[0] . "<br>" . $row[1] . "<br>" . $row[2] . "<br>";
-                $DBcon->close();
-              ?>
-            </div>
-          </div>
         </div>
          
         </div>
