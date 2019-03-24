@@ -1,3 +1,19 @@
+<?php
+    session_start();
+    if (!array_key_exists('username' , $_SESSION) || !isset($_SESSION['username'])) {
+        // if user has not logged in
+        header("Location: /train_ticket_system/");
+    }
+
+    $img_src = "./img/" . $_SESSION['username'] . "/profile_img.jpg";
+
+    if (!file_exists($img_src)) {
+        $img_src = "./img/gates.jpg";
+    }
+
+    $img_src = "'" . $img_src . "'";
+?>
+
 <!DOCTYPE html>
 <html>
 <title>Train System</title>
@@ -118,23 +134,7 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-6" style = "width: 30%">
-            <img src=
-              <?php 
-                require_once "./utility/dbconnect_user.php";     
-                $img_dir = "img/" . $DBuser . "/";
-                $file_list = scandir($img_dir);
-                $img_src = "";
-                if (sizeof ($file_list) == 1) {
-                  $img_src = $img_dir . $file_list[0];
-                  
-                } else {
-                  $img_src = "./img/gates.jpg";
-                }
-                echo '"' . $img_src . '"';
-                $DBcon->close();
-              ?>
-              alt="img/gates.jpg"
-            >
+            <img src= <?php echo $img_src; ?> alt="avatar" style="max-height: 400px; max-width: 400px">
             <form action="./utility/upload_image.php" method="post" enctype="multipart/form-data">
                 <br><br>Select image to upload:<br>
                 <input type="file" name="fileToUpload" id="fileToUpload"><br>
