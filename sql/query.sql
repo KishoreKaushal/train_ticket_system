@@ -234,7 +234,5 @@ begin
 
 end //
 
--- select seat_no from seat_list where (select check_seat_available(12457, '2019-03-23', 1, 'CAPE', 'TPJ')) = 1
-
 delimiter ;
 

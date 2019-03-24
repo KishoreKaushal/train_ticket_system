@@ -39,16 +39,30 @@ if (array_key_exists('username' , $_SESSION) && isset($_SESSION['username'])) {
     
         $row = $query_result->fetch_array();
 
-        if (sizeof ($row[0]) < $no_of_seats) {
+        if (sizeof($row[0]) < $no_of_seats) {
             throw new Exception("Only ". sizeof ($row[0]) . " seats remain now.");
         } else {
+            $sql = "";
+            // book_ticket(in pnr bigint unsigned, in userid varchar(50), in src varchar(5), in dest varchar(5), in train_no int, in date_journey date, in seat_no int unsigned)
             
+            for ($iter = 0; $iter < $no_of_seats; $iter = $iter + 1) {
+                $pnr = $journey_date . $train_no . sprintf ("%02d", $iter) . $src_st;
+                $cq = "call book_ticket($pnr, $username, $src_st, $dest_st, $train_no, $journey_date, $iter;";
+                $sql .= $cq;
+            }
+
+            if (($query_result = $DBcon_admin->multi_query($sql)) == FALSE) {
+                throw new Exception("Error while booking seats - " . $mysqli->error);
+            }
         }
 
         /* check whether the work is committed successfully */
         if (!$DBcon_admin->commit()) {
             throw new Exception("FAILED TO COMMIT CHANGES");
         }
+
+        $response['status'] = true;
+        $response['msg'] = "Booking completed successfully!";
     } catch (Exception $e){
         $response['status'] = false;
         $response['msg'] = $e->getMessage();
