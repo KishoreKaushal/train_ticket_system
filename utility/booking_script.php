@@ -46,8 +46,9 @@ if (array_key_exists('username' , $_SESSION) && isset($_SESSION['username'])) {
             // book_ticket(in pnr bigint unsigned, in userid varchar(50), in src varchar(5), in dest varchar(5), in train_no int, in date_journey date, in seat_no int unsigned)
             
             for ($iter = 0; $iter < $no_of_seats; $iter = $iter + 1) {
-                $pnr = $journey_date . $train_no . sprintf ("%02d", $iter) . $src_st;
-                $cq = "call book_ticket($pnr, $username, $src_st, $dest_st, $train_no, $journey_date, $iter;";
+                $seat_no = $row[0][$iter];
+                $pnr = $journey_date . $train_no . sprintf ("%02d", $seat_no) . $src_st;
+                $cq = "call book_ticket($pnr, $username, $src_st, $dest_st, $train_no, $journey_date, $seat_no;";
                 $sql .= $cq;
             }
 
