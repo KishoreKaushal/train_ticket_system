@@ -140,22 +140,44 @@
                 <input type="file" name="fileToUpload" id="fileToUpload"><br>
                 <input type="submit" value="Upload Image" name="submit"><br>
             </form>
-            <!-- <?php
-              require_once "./utility/dbconnect_user.php";
-              
-              $DBcon->close();
-            ?> -->
         </div>
         <div class="col-sm-6" style = "width = 70%">
-        <form action="/action_page.php" method="get">
-            Current Password: <input type="text" name="oldP"><br>
-            New Password: &emsp; <input type="text" name="newP"><br>
-            Confirm Password:<input type="text" name="conP"><br>
-            <input type="submit" value="Submit">
+        <form action="./utility/change_pass.php" method="get">
+            <div class="container">
+              <div class="row">
+                <div class="col-sm-6" style = "width: 50%; border:2px solid black;">
+                  Current Password: <br>
+                  New Password: <br>
+                  Confirm Password: <br>
+                </div>
+                <div class="col-sm-6" style = "width: 50%; border:2px solid black;">
+                  <input type="text" name="oldP"><br>
+                  <input type="text" name="newP"><br>
+                  <input type="text" name="conP"><br>
+                </div>
+              </div>
+            </div>
+            &emsp; &emsp; <input type="submit" value="Submit">
         </form> 
         <br><br>
         <div class="container">
-          <div 
+          <div class="row">
+            <div class="col-sm-6" style = "width: 50%; border:2px solid black;">
+              Username <br>
+              Aadhar number <br>
+              Contact number <br>
+            </div>
+            <div class="col-sm-6" style = "width: 50%; border:2px solid black;">
+              <?php 
+                require_once "./utility/dbconnect_user.php";    
+                $sql = "select name, aadhar_no, contact_no from user where userid = " . $DBuser;
+                $query_result = $DBcon->query($sql);
+                $row = $query_result -> fetch_array();
+                echo $row[0] . "<br>" . $row[1] . "<br>" . $row[2] . "<br>";
+                $DBcon->close();
+              ?>
+            </div>
+          </div>
         </div>
          
         </div>
