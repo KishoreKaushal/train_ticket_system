@@ -18,6 +18,7 @@
     $train_code_arr = array();
     $train_name_arr = array();
     $train_info = array();
+    $available_seats = array();
 
     $query_result = $DBcon_public->query($sql);
     while ($row = $query_result->fetch_array()){
@@ -25,17 +26,49 @@
         array_push($train_name_arr, $row[1]);
     }
 
+    $sql = "select (current_date()+INTERVAL 1 DAY) as min_date , (current_date() + INTERVAL 20 DAY) as max_date;";
+    $query_result = $DBcon_public->query($sql);
+    $row = $query_result->fetch_array();
+    $min_date = $row['min_date'];
+    $max_date = $row['max_date'];
+
     if (!empty($_POST)) {
-        if (isset($_POST['destination'], $_POST['source'])){
+        if (isset($_POST['destination'], $_POST['source'], $_POST['dept-date'])){
             $dest = $DBcon_public->real_escape_string(strip_tags($_POST['destination']));
             $src = $DBcon_public->real_escape_string(strip_tags($_POST['source']));
+            $dept_date = $DBcon_public->real_escape_string(strip_tags($_POST['dept-date']));
+            $dept_date = strtotime($dept_date);
 
-            $sql = "call train_between_stations('" . $src . "' , '" . $dest . "')";
+            if ($dept_date) {
+                $dept_date = date('Y-m-d', $dept_date);
+            } else {
+                echo 'Invalid Date: ' . $_POST['dept-date'];
+                die(0);
+            }
+
+            $sql = "call train_between_stations('" . $src . "' , '" . $dest . "');";
 
             $query_result = $DBcon_public->query($sql);
 
             while ($row = $query_result->fetch_array()){
                 array_push($train_between_stations, $row);
+            }
+
+            $query_result->free_result();
+            $DBcon_public->next_result();
+
+            foreach($train_between_stations as $tr) {
+                $trno = $tr['train_no'];
+                $temp_sql = "call available_seat_list($trno, '$dept_date', '$src', '$dest')";
+                $temp_result = $DBcon_public->query($temp_sql);
+                if (!$temp_result) {
+                    echo "$DBcon_public->error";
+                } else {
+                    array_push($available_seats, $temp_result->num_rows);
+                }
+
+                $temp_result->free_result();
+                $DBcon_public->next_result();
             }
 
             $trains_found = true;
@@ -66,6 +99,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -155,6 +189,7 @@
                 return false;
             }
         }
+
     </script>
 
     <?php
@@ -247,6 +282,9 @@
                     ?>
                 </select>
                 <br/>
+                <label for="dept-date">Dept. Date: </label>
+
+                <input type="date" name="dept-date" id="dept-date" min=<?php echo "$min_date" ?> max=<?php echo "$max_date"?> value=<?php echo "$min_date" ?> required>
                 <div class="col-sm-2" style="padding-top:10px">
                     <input id="btn-findtrains" class="btn btn-primary btn-block" type="submit">Find Trains</button>
                 </div>
@@ -264,6 +302,8 @@
                             <th>SchedArr</th>
                             <th>Dist.</th>
                             <th>Fare</th>
+                            <th>Avail. Seats</th>
+                            <th>Qty.</th>
                         </tr>";
 
                     for ($i = 0; $i <sizeof($train_between_stations) ; $i++) {
@@ -273,7 +313,9 @@
                             "<td>" . $train_between_stations[$i]['sched_dept'] . "</td>" .
                             "<td>" . $train_between_stations[$i]['sched_arr'] . "</td>" .
                             "<td>" . $train_between_stations[$i]['distance_travelled'] . "</td>" .
-                            "<td>" . $train_between_stations[$i]['total_fare'] . "</td>" .
+                            "<td>" . intval($train_between_stations[$i]['total_fare']) . "</td>" .
+                            "<td>" . $available_seats[$i] . "</td>" .
+                            "<td>" . "00" . "</td>" .
                             "</tr>";
                     }
 

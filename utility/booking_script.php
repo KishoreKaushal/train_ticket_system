@@ -50,7 +50,7 @@ if (array_key_exists('username' , $_SESSION) && isset($_SESSION['username'])) {
 
             $sql = "call available_seat_list($train_no, $journey_date, $src_st, $dest_st);";
             if (($query_result = $DBcon_admin->query($sql)) == FALSE) {
-                throw new Exception("Error while calling available_seat_list - " . $mysqli->error);
+                throw new Exception("Error while calling available_seat_list - " . $DBcon_admin->error);
             }
 
             $data = array();
