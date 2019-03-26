@@ -180,6 +180,13 @@
     </style>
 
     <script>
+        function trainObj(tr_data_arr) {
+            this.trno = parseInt(tr_data_arr[0]);
+            this.fare = parseInt(tr_data_arr[5]);
+            this.availSeats = parseInt(tr_data_arr[6]);
+            this.qty = parseInt(tr_data_arr[7]);
+        }
+
         function validateSrcDestForm() {
             if($('#source').val() !== $("#destination").val()) {
                 // alert("Source and destination are not same");
@@ -189,6 +196,22 @@
                 return false;
             }
         }
+
+        $(function(){
+            $("input[name='btn-book']").click(function(){
+                var $tr = $(this).closest("tr");
+                var $tds = $tr.find("td");
+                var data = [];
+                $.each($tds, function() {
+                    data.push($(this).text());
+                    console.log($(this).text());
+                });
+                var qty = $tr.children("td").eq(7).children("input[type='number']:first-child").val();
+                data.pop();
+                data.push(qty);
+                var tr_obj = new trainObj(data);
+            });
+        });
 
     </script>
 
@@ -304,6 +327,7 @@
                             <th>Fare</th>
                             <th>Avail. Seats</th>
                             <th>Qty.</th>
+                           
                         </tr>";
 
                     for ($i = 0; $i <sizeof($train_between_stations) ; $i++) {
@@ -315,7 +339,8 @@
                             "<td>" . $train_between_stations[$i]['distance_travelled'] . "</td>" .
                             "<td>" . intval($train_between_stations[$i]['total_fare']) . "</td>" .
                             "<td>" . $available_seats[$i] . "</td>" .
-                            "<td>" . "00" . "</td>" .
+                            "<td>" . "<input type='number' id='ticket-qty-". $i ."' name='ticket-qty' value=1 min='1' max='$available_seats[$i]'> " .
+                                     "<input type=\"button\" name=\"btn-book\" value=\"✓ GetNow\">" . "</td>".
                             "</tr>";
                     }
 
