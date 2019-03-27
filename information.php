@@ -108,6 +108,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
+    <script src="/train_ticket_system/js/main.js" type="text/javascript"></script>
+
     <style>
         body,h1,h2,h3,h4,h5,h6 {font-family: 'Chelsea Market', cursive;}
         .chal-desc{
@@ -210,6 +212,42 @@
                 data.pop();
                 data.push(qty);
                 var tr_obj = new trainObj(data);
+
+                var data = {
+                    "train_no" : tr_obj.trno,
+                    "qty" : tr_obj.qty,
+                    "fare" : tr_obj.fare,
+                    "availSeats" : tr_obj.availSeats,
+                    "src" : <?php echo "'$src'"?>,
+                    "dest" : <?php echo "'$dest'"?>,
+                    "date" : <?php echo "'$dept_date'" ?>
+                };
+
+                console.log(data);
+
+                if(validateBookingCredentials(data)){
+                    $.ajax({
+                        type	: 'POST',
+                        url		: 'http://localhost/train_ticket_system/utility/booking_script.php',
+                        data	: { booking_credentials : JSON.stringify(data) },
+                        success	: function(response){
+
+                            console.log(response);
+                            response = JSON.parse(response);
+
+                            if(response['status'] === true){
+                                alert("Booking succesful");
+                            } else if (response['status'] === false && response['msg'] == "NOT LOGGED IN"){
+                                alert("Please login first!!");
+                                window.location.replace("./signinup.php");
+                            } else {
+                                alert($response['msg']);
+                            }
+                        }
+                    });
+                } else {
+                    alert('Error : wrong booking credentials');
+                }
             });
         });
 
@@ -269,7 +307,7 @@
     <!-- <strong>HOME</strong> -->
     <br>
     <marquee scrollamount="10" style = "color: red; font-size : 150%"> New train started by Railway minister Himanshu Rai </marquee>
-    <h1>Retrieve Information</h1>
+    <h1>Train Ticket Booking</h1>
 
     <ul class="nav nav-tabs">
         <li class="nav-item">
@@ -316,6 +354,7 @@
             <?php
                 if (sizeof($train_between_stations) != 0) {
 
+                    echo "<h2>Trains Running on: $dept_date </h2><br/>";
                     // echo json_encode($train_between_stations);
                     echo "<table style='width:100%' sborder=2>";
                     echo "<tr>
@@ -404,7 +443,7 @@
 </div>
 
 <!-- Footer -->
-<footer class="page-footer font-small cyan darken-3 fixed-bottom" style="align:bottom;">
+<footer class="page-footer font-small cyan darken-3 fixed-bottom" style="align:bottom; z-index: -1">
     <!-- Footer Elements -->
     <div class="container">
       <!-- Grid row-->

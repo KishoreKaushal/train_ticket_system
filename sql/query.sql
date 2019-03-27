@@ -136,7 +136,7 @@ begin
 end //
 
 -- procedure to display the details of a booked ticket
-create or replace procedure pnr_info(in pnr bigint unsigned)
+create or replace procedure pnr_info(in pnr varchar(50))
 reads sql data
 begin
     if(not exists(select * from ticket as T where T.pnr = pnr)) then
@@ -180,7 +180,7 @@ begin
 end //
 
 -- procedure to book a ticket
-create or replace procedure book_ticket(in pnr bigint unsigned, in userid varchar(50), in src varchar(5), in dest varchar(5), in train_no int, in date_journey date, in seat_no int unsigned)
+create or replace procedure book_ticket(in pnr varchar(50), in userid varchar(50), in src varchar(5), in dest varchar(5), in train_no int, in date_journey date, in seat_no int unsigned)
 modifies sql data
 begin
     if(date_journey <= current_date) then 
@@ -196,7 +196,7 @@ begin
 end //
 
 -- procedure to cancel a ticket
-create or replace procedure cancel_ticket(in pnr bigint unsigned)
+create or replace procedure cancel_ticket(in pnr varchar(50))
 modifies sql data
 begin
     if(not exists(select * from ticket as T where T.pnr = pnr)) then
@@ -211,7 +211,7 @@ begin
 end //
 
 -- function to confirm a waitlisted ticket
-create or replace procedure confirm_ticket(pnr int, seat_no int)
+create or replace procedure confirm_ticket(pnr varchar(50), seat_no int)
 modifies sql data
 begin
     if(not exists(select * from ticket as T where T.pnr = pnr)) then

@@ -37,6 +37,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
+<script>
+    $(function(){
+        $('#btn-book-ticket').click(function(){
+            window.location.replace("./information.php");
+        })  ;
+    });
+</script>
+
 <style>
     body,h1,h2,h3,h4,h5,h6 {font-family: 'Chelsea Market', cursive;}
     .chal-desc{
@@ -156,44 +164,7 @@
         </div>
     </h1>
 
-    <div class="w3-panel w3-card-2">
-        <form class="form-book-ticket" onsubmit="return validateSrcDestForm()" method="post"
-              action=<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>>
-
-            <div class="form-group row">
-                <label for="source">Source: </label>
-                <div>
-                    <select name="source" id="source">
-                        <?php
-                        for ($i=0; $i < sizeof($st_code_arr); $i = $i + 1) {
-                            echo ("<option value='" . $st_code_arr[$i] . "'>". $st_name_arr[$i] ."</option>");
-                        }
-                        ?>
-                    </select>
-                </div>
-
-            </div>
-
-
-            <div class="form-group row">
-                <label for="destination">Destination: </label>
-                <div>
-                    <select name="destination" id="destination">
-                        <?php
-                        for ($i=0; $i < sizeof($st_code_arr); $i = $i + 1) {
-                            echo ("<option value='" . $st_code_arr[$i] . "'>". $st_name_arr[$i] ."</option>");
-                        }
-                        ?>
-                    </select>
-                </div>
-
-            </div>
-            <div class="col-sm-2" style="padding-top:10px">
-                <input id="btn-findtrains" class="btn btn-primary btn-block" type="submit">Find Trains</button>
-            </div>
-
-        </form>
-    </div>
+    <button id="btn-book-ticket">Book ticket</button>
     
 </div>
 

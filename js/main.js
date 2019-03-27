@@ -57,3 +57,7 @@ function validateSrcDestForm() {
         return false;
     }
 }
+
+function validateBookingCredentials(booking_credentials) {
+    return true;
+}
