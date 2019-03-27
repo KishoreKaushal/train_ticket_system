@@ -3,7 +3,6 @@
 
 CREATE OR REPLACE TABLE user (
   userid VARCHAR(50) NOT NULL PRIMARY KEY ,
-  password_hash VARCHAR(255) NOT NULL ,
   name VARCHAR(100) NOT NULL ,
   aadhar_no BIGINT UNSIGNED NOT NULL UNIQUE ,
   contact_no VARCHAR(20) NOT NULL
@@ -56,7 +55,7 @@ CREATE OR REPLACE TABLE path (
 
 
 CREATE OR REPLACE TABLE ticket (
-  pnr BIGINT UNSIGNED NOT NULL PRIMARY KEY ,
+  pnr VARCHAR(50) NOT NULL PRIMARY KEY ,
   userid VARCHAR(50) NOT NULL ,
   source VARCHAR(5) NOT NULL ,
   dest VARCHAR(5) NOT NULL ,
@@ -80,17 +79,13 @@ CREATE OR REPLACE TABLE reservation (
   train_no INT UNSIGNED NOT NULL ,
   seat_no INT UNSIGNED NOT NULL ,
   journey_date DATE NOT NULL ,
-  pnr BIGINT UNSIGNED NOT NULL UNIQUE,
+  pnr VARCHAR(50) NOT NULL UNIQUE,
   src_idx INT NOT NULL ,
   dest_idx INT NOT NULL ,
   PRIMARY KEY (train_no, seat_no, journey_date, src_idx) ,
   FOREIGN KEY (train_no) REFERENCES train(train_no) ,
   FOREIGN KEY (train_no, src_idx) references path(train_no, stoppage_idx) ,
   FOREIGN KEY (train_no, dest_idx) references path(train_no, stoppage_idx) ,
+  FOREIGN KEY (pnr) references ticket(pnr) ,
   check (seat_no > 0 and src_idx < dest_idx)
 );
-alter table reservation modify column pnr varchar(50) not null;
-alter table reservation add foreign key (pnr) references ticket(pnr);
-
-ALTER TABLE user
-  DROP COLUMN IF EXISTS password_hash;
