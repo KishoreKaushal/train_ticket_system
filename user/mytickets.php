@@ -127,7 +127,37 @@
     </style>
 
     <script>
+        tblData = null;
 
+        $(function(){
+            var myRows = [];
+            var $headers = $("th");
+            var $rows = $("tbody tr").each(function(index) {
+                $cells = $(this).find("td");
+                myRows[index] = {};
+                $cells.each(function(cellIndex) {
+                    myRows[index][$($headers[cellIndex]).html()] = $(this).html();
+                });
+            });
+
+            tblData = myRows;
+            console.log(tblData[0]);
+        });
+
+
+        $(function(){
+            $('table#tbl-my-tickets button').each(function(){
+                $(this).click(function(){
+                    var myid = $(this).attr("id");
+                    var myidx = parseInt(myid[myid.length-1]);
+                    if(tblData[myidx].status === "CANCELLED") {
+                        alert('Ticket is already cancelled.');
+                    } else {
+                        alert('Ticket needs to be cancelled rightaway.');
+                    }
+                });
+            });
+        });
     </script>
 
 </head>
@@ -172,8 +202,8 @@
 
     <div style="margin-top:60px;"></div>
 
-    <div align = "center">
-        <table class="table table-dark">
+    <div align = "center"  style="overflow:auto">
+        <table id="tbl-my-tickets" class="table table-dark"  style="overflow:auto">
             <thead class="thead-light">
             <tr>
                 <th scope="col">pnr</th>
@@ -185,6 +215,7 @@
                 <th scope="col">date_journey</th>
                 <th scope="col">status</th>
                 <th scope="col">seat_no</th>
+                <th scope="">cancel</th>
             </tr>
             </thead>
             <tbody>
@@ -201,6 +232,7 @@
                         "<td>" . $ticket_info[$i]['date_journey'] . "</td>" .
                         "<td>" . $ticket_info[$i]['status'] . "</td>" .
                         "<td>" . $ticket_info[$i]['seat_no'] . "</td>" .
+                        "<td>" . "<button id='btn-cancel-$i'>OK</button>" . "</td>" .
                         "</tr>";
                 }
             ?>
