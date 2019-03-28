@@ -234,5 +234,18 @@ begin
 
 end //
 
+-- procedure that confirms waitlisted tickets.
+create or replace procedure book_waitlisted_seats(in train_no int, in journey_date date, in seat_no int)
+returns bool 
+modifies sql data 
+begin 
+    update ticket set status = 'CONFIRM' and seat = seat_no where ticket.pnr in (
+        select T.pnr from ticket as T 
+        where T.train_no = train_no and T.date_journey = journey_date and 
+        (select check_seat_available(train_no, journey_date, seat_no, T.source, T.dest))=1 
+        and T.status = 'WAITLISTED' order by T.date_journey limit 1;
+    )
+end //
+
 delimiter ;
 
