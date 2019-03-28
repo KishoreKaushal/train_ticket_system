@@ -42,6 +42,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
+<script>
+    $(function(){
+        $('#btn-my-tickets').click(function(){
+            window.location.replace("./user/mytickets.php");
+        })  ;
+    });
+</script>
+
+
 <style>
     body,h1,h2,h3,h4,h5,h6 {font-family: 'Chelsea Market', cursive;}
     .chal-desc{
@@ -79,6 +88,11 @@
         color: red;
         /* background-color: #000000; */
     }
+
+    #modal-my-tickets {
+        color: black;
+    }
+
     body{
         color: white;
         background:linear-gradient(to right, rgb(29, 151, 108), rgb(147, 249, 185));
@@ -192,6 +206,13 @@
         </div>
     </div>
 </div>
+
+
+    <div align = "center">
+
+        <button id="btn-my-tickets" class="btn btn-lg btn-primary">My tickets</button>
+
+    </div>
 
 <!-- <div>
     <div style="width: 30%; float:left; heigth: 50%;">
