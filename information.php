@@ -26,7 +26,7 @@
         array_push($train_name_arr, $row[1]);
     }
 
-    $sql = "select (current_date()+INTERVAL 1 DAY) as min_date , (current_date() + INTERVAL 20 DAY) as max_date;";
+    $sql = "select (current_date()+INTERVAL 1 DAY) as min_date , (current_date() + INTERVAL 10 DAY) as max_date;";
     $query_result = $DBcon_public->query($sql);
     $row = $query_result->fetch_array();
     $min_date = $row['min_date'];
@@ -281,7 +281,7 @@
               <a class="nav-link" href="#">Information</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">My Profile</a>
+              <a class="nav-link" href="./profile.php">My Profile</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">Contact Us</a>
