@@ -158,3 +158,9 @@ CREATE OR REPLACE PROCEDURE proc_seat_insert(p1 INT)
 CALL proc_seat_insert(20)//
 
 delimiter ;
+
+CREATE OR REPLACE temp_wait_table(
+  pnr varchar(50) not null 
+  primary key
+);
+

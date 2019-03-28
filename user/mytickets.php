@@ -5,9 +5,31 @@
         header("Location: /train_ticket_system/signinup.php");
     }
 
+
+
     $username = $_SESSION['username'];
+    $password = $_SESSION['password'];
+    require_once "../utility/dbconnect_user.php";
+
+    $sql = "call booking_history('$username')";
 
 
+    if(($query_result = $DBcon->query($sql)) == FALSE){
+        echo $DBcon->error;
+        echo $DBcon->close();
+        exit();
+    }
+
+    $ticket_info = array();
+
+    while($row = $query_result->fetch_array()){
+        array_push($ticket_info, $row);
+    }
+
+    $query_result->free_result();
+    $DBcon->next_result();
+
+    $DBcon->close();
 ?>
 
 
@@ -150,82 +172,45 @@
 
     <div style="margin-top:60px;"></div>
 
-
     <div align = "center">
-        <table class="table">
-            <thead>
+        <table class="table table-dark">
+            <thead class="thead-light">
             <tr>
-                <th scope="col">First</th>
-                <th scope="col">Last</th>
-                <th scope="col">Handle</th>
+                <th scope="col">pnr</th>
+                <th scope="col">train_no</th>
+                <th scope="col">source</th>
+                <th scope="col">dest</th>
+                <th scope="col">date_resv</th>
+                <th scope="col">time_resv</th>
+                <th scope="col">date_journey</th>
+                <th scope="col">status</th>
+                <th scope="col">seat_no</th>
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>@mdo</td>
-            </tr>
-            <tr>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-            </tr>
-            <tr>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-            </tr>
+
+            <?php
+                for ($i = 0; $i <sizeof($ticket_info) ; $i++) {
+                    echo "<tr>".
+                        "<td>" . $ticket_info[$i]['pnr'] . "</td> " .
+                        "<td>" . $ticket_info[$i]['train_no'] . "</td> " .
+                        "<td>" . $ticket_info[$i]['source'] . "</td>" .
+                        "<td>" . $ticket_info[$i]['dest'] . "</td>" .
+                        "<td>" . $ticket_info[$i]['date_resv'] . "</td>" .
+                        "<td>" . $ticket_info[$i]['time_resv'] . "</td>" .
+                        "<td>" . $ticket_info[$i]['date_journey'] . "</td>" .
+                        "<td>" . $ticket_info[$i]['status'] . "</td>" .
+                        "<td>" . $ticket_info[$i]['seat_no'] . "</td>" .
+                        "</tr>";
+                }
+            ?>
+
             </tbody>
         </table>
 
 
 
     </div>
-
-    <!-- Footer -->
-    <footer class="page-footer font-small cyan darken-3 fixed-bottom" style="align:bottom; z-index: -1">
-        <!-- Footer Elements -->
-        <div class="container">
-            <!-- Grid row-->
-            <div class="row">
-                <!-- Grid column -->
-                <div class="col-md-12 text-center">
-                    <div class="mt-5 mb-1">
-                        <!-- Facebook -->
-                        <a class="fb-ic">
-                            <i class="fa fa-facebook fa-lg white-text mr-md-5 mr-3 fa-2x"> </i>
-                        </a>
-                        <!-- Twitter -->
-                        <a class="tw-ic">
-                            <i class="fa fa-twitter fa-lg white-text mr-md-5 mr-3 fa-2x"> </i>
-                        </a>
-                        <!-- Google +-->
-                        <a class="gplus-ic">
-                            <i class="fa fa-google-plus fa-lg white-text mr-md-5 mr-3 fa-2x"> </i>
-                        </a>
-                        <!--Linkedin -->
-                        <a class="li-ic">
-                            <i class="fa fa-linkedin fa-lg white-text mr-md-5 mr-3 fa-2x"> </i>
-                        </a>
-                        <!--Instagram-->
-                        <a class="ins-ic">
-                            <i class="fa fa-instagram fa-lg white-text mr-md-5 mr-3 fa-2x"> </i>
-                        </a>
-                        <!--Pinterest-->
-                        <a class="pin-ic">
-                            <i class="fa fa-pinterest fa-lg white-text fa-2x"> </i>
-                        </a>
-                    </div>
-                </div>
-                <!-- Grid column -->
-
-            </div>
-
-            <div class="footer-copyright text-center m-2">Made with &hearts; in IIT-PKD</div>
-        </div>
-
-    </footer>
 
 </div>
 
