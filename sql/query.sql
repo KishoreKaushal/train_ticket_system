@@ -242,7 +242,7 @@ begin
       (select T.pnr from ticket as T
       where T.train_no = train_no and T.date_journey = journey_date and
           (select check_seat_available(train_no, journey_date, stno, T.source, T.dest))=1
-        and T.status = 'WAITLISTED' order by T.date_journey limit 1  into temp_pnr);
+        and T.status = 'WAITLISTED' order by T.date_resv, T.time_resv, T.pnr limit 1  into temp_pnr);
 
     update ticket set status = 'CONFIRM', seat_no = stno where pnr = temp_pnr;
 end //
