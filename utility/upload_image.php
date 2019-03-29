@@ -21,6 +21,7 @@
 
     // Check if image file is a actual image or fake image
     if(isset($_POST["submit"])) {
+        echo $_FILES["fileToUpload"]["tmp_name"] ."<br/>";
         $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
         if($check !== false) {
             echo "File is an image - " . $check["mime"] . ".";
@@ -47,9 +48,10 @@
         return 0;
     // if everything is ok, try to upload file
     } else {
+        unlink($target_file);
         if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
             echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.";
-            chmod($target_file, 0666);
+            chmod($target_file, 777);
             header("Location: /train_ticket_system/profile.php");
         } else {
             echo "Sorry, there was an error uploading your file.";

@@ -158,7 +158,7 @@
     <br>
     <marquee scrollamount="10" style = "color: red; font-size : 150%"> New train started by Railway minister Himanshu Rai </marquee>
     <h1>
-        Aao ticket book karo
+
         <div style = "text-align:center">
         <img src = "./img/train2.jpg" style="width: 50%; height: 50%; padding-top : 10px">
         </div>

@@ -222,7 +222,7 @@
 </div> -->
 
 <!-- Footer -->
-<footer class="page-footer font-small cyan darken-3 fixed-bottom" style="align:bottom;">
+<footer class="page-footer font-small cyan darken-3 fixed-bottom" style="z-index:-1 ; align:bottom;">
     <!-- Footer Elements -->
     <div class="container">
       <!-- Grid row-->
