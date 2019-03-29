@@ -136,7 +136,7 @@ begin
 end //
 
 -- procedure to display the details of a booked ticket
-create or replace procedure pnr_info(in pnr bigint unsigned)
+create or replace procedure pnr_info(in pnr varchar(50))
 reads sql data
 begin
     if(not exists(select * from ticket as T where T.pnr = pnr)) then
@@ -160,7 +160,7 @@ begin
         select pnr, train_no, source, dest, date_resv, time_resv, date_journey, status, seat_no
         from ticket as T
         where T.userid = userid
-        order by date_resv, time_resv;
+        order by date_resv, time_resv desc ;
     end if;
 end //
 
@@ -180,7 +180,7 @@ begin
 end //
 
 -- procedure to book a ticket
-create or replace procedure book_ticket(in pnr bigint unsigned, in userid varchar(50), in src varchar(5), in dest varchar(5), in train_no int, in date_journey date, in seat_no int unsigned)
+create or replace procedure book_ticket(in pnr varchar(50), in userid varchar(50), in src varchar(5), in dest varchar(5), in train_no int, in date_journey date, in seat_no int unsigned)
 modifies sql data
 begin
     if(date_journey <= current_date) then 
@@ -196,7 +196,7 @@ begin
 end //
 
 -- procedure to cancel a ticket
-create or replace procedure cancel_ticket(in pnr bigint unsigned)
+create or replace procedure cancel_ticket(in pnr varchar(50))
 modifies sql data
 begin
     if(not exists(select * from ticket as T where T.pnr = pnr)) then
@@ -211,7 +211,7 @@ begin
 end //
 
 -- function to confirm a waitlisted ticket
-create or replace procedure confirm_ticket(pnr int, seat_no int)
+create or replace procedure confirm_ticket(pnr varchar(50), seat_no int)
 modifies sql data
 begin
     if(not exists(select * from ticket as T where T.pnr = pnr)) then
@@ -232,6 +232,18 @@ begin
     select seat_no from seat_list 
         where  (select check_seat_available(train_no, journey_date, seat_no, src_st, dest_st)) = 1;
 
+end //
+
+-- procedure that confirms waitlisted tickets.
+create or replace procedure book_waitlisted_seats(in train_no int, in journey_date date, in seat_no int)
+modifies sql data 
+begin 
+    delete from temp_wait_table;
+    select T.pnr into temp_wait_table from ticket as T
+        where T.train_no = train_no and T.date_journey = journey_date and 
+        (select check_seat_available(train_no, journey_date, seat_no, T.source, T.dest))=1 
+        and T.status = 'WAITLISTED' order by T.date_journey limit 1;
+    update ticket set status = 'CONFIRM' and seat = seat_no where ticket.pnr in temp_wait_table;
 end //
 
 delimiter ;

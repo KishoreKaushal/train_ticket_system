@@ -1,14 +1,12 @@
 <?php
 
-/** Assumes the following parameters in $_POST
+/** Assumes the following parameters in the Ajax query
 * src_st
 * train_no
 * dest_st
 * journey_date
 * no_of_seats
 */
-
-// available_seat_list(in train_no int, in journey_date date, in src_st varchar(5), in dest_st varchar(5))
 
 session_start();
 if (array_key_exists('username' , $_SESSION) && isset($_SESSION['username'])) {
@@ -22,19 +20,29 @@ if (array_key_exists('username' , $_SESSION) && isset($_SESSION['username'])) {
 
         require_once './dbconnect_admin.php';
 
-        $src_st = $DBcon_admin->real_escape_string(strip_tags($booking_credentials['src_st']));
-        $dest_st = $DBcon_admin->real_escape_string(strip_tags($booking_credentials['dest_st']));
+        $src_st = $DBcon_admin->real_escape_string(strip_tags($booking_credentials['src']));
+        $dest_st = $DBcon_admin->real_escape_string(strip_tags($booking_credentials['dest']));
         $train_no = $DBcon_admin->real_escape_string(strip_tags($booking_credentials['train_no']));
-        $journey_date = $DBcon_admin->real_escape_string(strip_tags($booking_credentials['journey_date']));
-        $no_of_seats = $DBcon_admin->real_escape_string(strip_tags($booking_credentials['no_of_seats']));
+        $journey_date = $DBcon_admin->real_escape_string(strip_tags($booking_credentials['date']));
+        $no_of_seats = $DBcon_admin->real_escape_string(strip_tags($booking_credentials['qty']));
+        $fare = $DBcon_admin->real_escape_string(strip_tags($booking_credentials['fare']));
 
-//        $src_st = $_POST["src_st"];
-//        $dest_st = $_POST["dest_st"];
-//        $train_no = $_POST["train_no"];
-//        $journey_date = $_POST["journey_date"];
-//        $no_of_seats = $_POST["no_of_seats"];
+
+
+        $curr_time = '23:56:17';
+        $sql = "select current_time";
+        $query_result = $DBcon_admin->query($sql);
+        $curr_time = $query_result->fetch_array();
+        $curr_time = $curr_time[0];
+
+        $query_result->free_result();
+        $DBcon_admin->next_result();
 
         try {
+
+            if ($no_of_seats > 20) {
+                throw new Exception("These hacks won't work here my friend");
+            }
 
             /* turn autocommit off */
             if (!$DBcon_admin->autocommit(FALSE)) {
@@ -46,11 +54,9 @@ if (array_key_exists('username' , $_SESSION) && isset($_SESSION['username'])) {
                 throw new Exception("FAILED TO START TRANSACTION");
             }
 
-
-
-            $sql = "call available_seat_list($train_no, $journey_date, $src_st, $dest_st);";
+            $sql = "call available_seat_list($train_no, '$journey_date', '$src_st', '$dest_st');";
             if (($query_result = $DBcon_admin->query($sql)) == FALSE) {
-                throw new Exception("Error while calling available_seat_list - " . $DBcon_admin->error);
+                throw new Exception("Error while calling available_seat_list - " . $DBcon_admin->error . " Sql: " . $sql);
             }
 
             $data = array();
@@ -58,21 +64,37 @@ if (array_key_exists('username' , $_SESSION) && isset($_SESSION['username'])) {
                 array_push($data, $row);
             }
 
-            if (sizeof($data) < $no_of_seats) {
-                throw new Exception("Only ". sizeof ($data) . " seats remain now.");
-            } else {
-                $sql = "";
-                // book_ticket(in pnr bigint unsigned, in userid varchar(50), in src varchar(5), in dest varchar(5), in train_no int, in date_journey date, in seat_no int unsigned)
+            $query_result->free_result();
+            $DBcon_admin->next_result();
 
-                for ($iter = 0; $iter < $no_of_seats; $iter = $iter + 1) {
-                    $seat_no = $data[$iter];
-                    $pnr = $journey_date . $train_no . sprintf ("%02d", $seat_no) . $src_st;
-                    $cq = "call book_ticket($pnr, $username, $src_st, $dest_st, $train_no, $journey_date, $seat_no);";
-                    $sql .= $cq;
+            for ($iter = 0; $iter < $no_of_seats && $iter < sizeof ($data); $iter = $iter + 1) {
+                $seat_no = $data[$iter]['seat_no'];
+                $jd = date("Ymd",strtotime($journey_date));
+                $curr_time = date("Hms", strtotime($curr_time));
+                $pnr = $jd . $train_no . sprintf ("%02d", $seat_no) . $curr_time;
+                $sql = "call book_ticket('$pnr', '$username', '$src_st', '$dest_st', $train_no, '$journey_date', $seat_no)";
+
+                if (!($query_result = $DBcon_admin->query($sql))) {
+                    throw new Exception("Error while booking seats - " . $DBcon_admin->error . " PNR: " . $sql);
                 }
+            }
 
-                if (($query_result = $DBcon_admin->multi_query($sql)) == FALSE) {
-                    throw new Exception("Error while booking seats - " . $mysqli->error);
+            $cantbook = 0;
+            if ($no_of_seats > sizeof ($data)) {
+                $cantbook = $no_of_seats - sizeof ($data);
+            }
+
+            for ($iter = 0; $iter < $cantbook; $iter = $iter + 1) {
+                // This is a hack. It might not work in some extreme cases.
+                $seat_no = mt_rand(0, 1000000000);
+                $jd = date("Ymd",strtotime($journey_date));
+                $curr_time = date("Hms", strtotime($curr_time));
+                $pnr = $jd . $train_no . sprintf ("%02d", $seat_no) . $curr_time;
+                // We are not setting seat so that it inserts as wait list.
+                $sql = "call book_ticket('$pnr', '$username', '$src_st', '$dest_st', $train_no, '$journey_date')";
+
+                if (!($query_result = $DBcon_admin->query($sql))) {
+                    throw new Exception("Error while booking seats - " . $DBcon_admin->error . " PNR: " . $sql);
                 }
             }
 
@@ -81,8 +103,14 @@ if (array_key_exists('username' , $_SESSION) && isset($_SESSION['username'])) {
                 throw new Exception("FAILED TO COMMIT CHANGES");
             }
 
+            if ($cantbook) {
+                $response['msg'] = "Booking completed successfully! ".sizeof ($data) . " tickets confirmed and " . $cantbook . " tickets in waiting.";
+            } else {
+                $response['msg'] = "Booking completed successfully! " . $no_of_seats . " tickets confirmed and no tickets in waiting.";
+            }
+
             $response['status'] = true;
-            $response['msg'] = "Booking completed successfully!";
+
         } catch (Exception $e){
             $response['status'] = false;
             $response['msg'] = $e->getMessage();
@@ -94,9 +122,13 @@ if (array_key_exists('username' , $_SESSION) && isset($_SESSION['username'])) {
         $response['status'] = false;
         $response['msg'] = 'BOOKING CREDENTIALS NOT FOUND';
     }
+
     echo json_encode($response);
+
 } else {
-    header("Location: /train_ticket_system/signinup.php");
+    $response['status'] = false;
+    $response['msg'] = "NOT LOGGED IN";
+    echo json_encode($response);
 }
 
 ?>
