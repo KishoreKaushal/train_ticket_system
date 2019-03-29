@@ -19,10 +19,13 @@ if (array_key_exists('username' , $_SESSION) && isset($_SESSION['username'])) {
 
         require_once './dbconnect_admin.php';
 
+
         $train_no = $DBcon_admin->real_escape_string(strip_tags($cancel_credentials['train_no']));
         $journey_date = $DBcon_admin->real_escape_string(strip_tags($cancel_credentials['date']));
         $seat_no = $DBcon_admin->real_escape_string(strip_tags($cancel_credentials['seat_no']));
         $pnr = $DBcon_admin->real_escape_string(strip_tags($cancel_credentials['pnr']));
+        $status = $DBcon_admin->real_escape_string(strip_tags($cancel_credentials['status']));
+
 
         try {
 
@@ -38,35 +41,36 @@ if (array_key_exists('username' , $_SESSION) && isset($_SESSION['username'])) {
 
             $sql = "call cancel_ticket('$pnr')";
 
+
+
             if (($query_result = $DBcon_admin->query($sql)) == FALSE) {
                 throw new Exception("Error while calling available_seat_list - " . $DBcon_admin->error . " Sql: " . $sql);
             }
 
-            $query_result->free_result();
-            $DBcon_admin->next_result();
-
-            /* check whether the work is committed successfully */
-            if (!$DBcon_admin->commit()) {
-                throw new Exception("FAILED TO COMMIT CHANGES");
-            }
 
             $max_limit = 40;
-            while ($max_limit) {
+            while ($max_limit && $status == 'CONFIRM') {
                 // (in train_no int, in journey_date date, in seat_no int)
+
                 $sql = "call book_waitlisted_seats($train_no, '$journey_date', $seat_no)";
-                
+
+                #     update ticket set status = 'CONFIRM' where seat_no = stno and pnr = temp_pnr;
+
                 if (($query_result = $DBcon_admin->query($sql)) == FALSE) {
                     throw new Exception("Error while confirming waiting tickets - " . $DBcon_admin->error . " Sql: " . $sql);
                 }
+
+                echo "affected rows: $DBcon_admin->affected_rows \n";
 
                 if ($DBcon_admin->affected_rows == 0) {
                     break;
                 }
 
-                $query_result->free_result();
+
                 $DBcon_admin->next_result();
 
                 $max_limit -= 1;
+
             }
 
             $wait2con = 40 - $max_limit;
@@ -74,7 +78,12 @@ if (array_key_exists('username' , $_SESSION) && isset($_SESSION['username'])) {
             if (!$max_limit) {
                 throw new Exception("INFINITE LOOP DETECTED WHILE WORKING WITH WAITLISTED TICKETS");
             }
-        
+
+            /* check whether the work is committed successfully */
+            if (!$DBcon_admin->commit()) {
+                throw new Exception("FAILED TO COMMIT CHANGES");
+            }
+
             $response['msg'] = "Successfully cancelled the current ticket.";
             $response['status'] = true;
 

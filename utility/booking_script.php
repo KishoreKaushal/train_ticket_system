@@ -68,10 +68,11 @@ if (array_key_exists('username' , $_SESSION) && isset($_SESSION['username'])) {
             $DBcon_admin->next_result();
 
             for ($iter = 0; $iter < $no_of_seats && $iter < sizeof ($data); $iter = $iter + 1) {
+                $rand_no = mt_rand(0, 999999999);
                 $seat_no = $data[$iter]['seat_no'];
                 $jd = date("Ymd",strtotime($journey_date));
                 $curr_time = date("Hms", strtotime($curr_time));
-                $pnr = $jd . $train_no . sprintf ("%02d", $seat_no) . $curr_time;
+                $pnr = $jd . $train_no . sprintf ("%09d", $rand_no) . $curr_time;
                 $sql = "call book_ticket('$pnr', '$username', '$src_st', '$dest_st', $train_no, '$journey_date', $seat_no)";
 
                 if (!($query_result = $DBcon_admin->query($sql))) {
@@ -86,12 +87,12 @@ if (array_key_exists('username' , $_SESSION) && isset($_SESSION['username'])) {
 
             for ($iter = 0; $iter < $cantbook; $iter = $iter + 1) {
                 // This is a hack. It might not work in some extreme cases.
-                $seat_no = mt_rand(0, 1000000000);
+                $rand_no = mt_rand(0, 999999999);
                 $jd = date("Ymd",strtotime($journey_date));
                 $curr_time = date("Hms", strtotime($curr_time));
-                $pnr = $jd . $train_no . sprintf ("%02d", $seat_no) . $curr_time;
+                $pnr = $jd . $train_no . sprintf ("%09d", $rand_no) . $curr_time;
                 // We are not setting seat so that it inserts as wait list.
-                $sql = "call book_ticket('$pnr', '$username', '$src_st', '$dest_st', $train_no, '$journey_date')";
+                $sql = "call book_ticket('$pnr', '$username', '$src_st', '$dest_st', $train_no, '$journey_date', NULL)";
 
                 if (!($query_result = $DBcon_admin->query($sql))) {
                     throw new Exception("Error while booking seats - " . $DBcon_admin->error . " PNR: " . $sql);

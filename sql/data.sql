@@ -159,8 +159,12 @@ CALL proc_seat_insert(20)//
 
 delimiter ;
 
-CREATE OR REPLACE temp_wait_table(
+CREATE OR REPLACE table temp_wait_table(
   pnr varchar(50) not null 
   primary key
 );
 
+create or replace table tt(
+  old_status enum('CONFIRM','WAITLISTED','CANCELLED'),
+  new_status enum('CONFIRM','WAITLISTED','CANCELLED')
+);

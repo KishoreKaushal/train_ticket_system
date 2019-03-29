@@ -149,11 +149,40 @@
             $('table#tbl-my-tickets button').each(function(){
                 $(this).click(function(){
                     var myid = $(this).attr("id");
-                    var myidx = parseInt(myid[myid.length-1]);
+                    var myidx = parseInt(myid.substr(myid.lastIndexOf('-') + 1 , myid.length ));
                     if(tblData[myidx].status === "CANCELLED") {
                         alert('Ticket is already cancelled.');
                     } else {
-                        alert('Ticket needs to be cancelled rightaway.');
+                        if (confirm("Cancel the ticket?")) {
+                            console.log(tblData[myidx]);
+                            var ticketData = {
+                                "train_no" 	: parseInt(tblData[myidx].train_no),
+                                "date" 	: tblData[myidx].date_journey,
+                                "seat_no" 	: parseInt(tblData[myidx].seat_no),
+                                "pnr" 	: tblData[myidx].pnr,
+                                "status": tblData[myidx].status
+                            };
+
+                            console.log("ticket Data: ");
+                            console.log(ticketData);
+
+                            $.ajax({
+                                type	: 'POST',
+                                url		: 'http://localhost/train_ticket_system/utility/cancel_ticket.php',
+                                data	: { cancel_credentials : JSON.stringify(ticketData) },
+                                success	: function(response){
+
+                                    console.log(response);
+                                    response = JSON.parse(response);
+
+                                    // if(response['status'] === false && response['msg'] === "NOT LOGGED IN"){
+                                    //
+                                    // } else {
+                                    //
+                                    // }
+                                }
+                            });
+                        }
                     }
                 });
             });
