@@ -1,16 +1,11 @@
 <?php
-    echo $_SERVER['PHP_SELF'];
     session_start();
-    
-    // if (isset($_GET['logout']) || isset($_POST['logout'])) {
-        session_destroy();
-        unset($_SESSION['uid']);
-        // successful
-        $response['status'] = true;
-    // }
-    // else{
-        // error
-        // $response['status'] = false;
-    // }
+
+    session_destroy();
+    unset($_SESSION['username']);
+    unset($_SESSION['password']);
+
+    $response['status'] = true;
+
     echo json_encode($response);
 ?>

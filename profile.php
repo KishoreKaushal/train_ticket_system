@@ -2,7 +2,7 @@
     session_start();
     if (!array_key_exists('username' , $_SESSION) || !isset($_SESSION['username'])) {
         // if user has not logged in
-        header("Location: /train_ticket_system/");
+        header("Location: /train_ticket_system/signinup.php");
     }
 
     $img_src = "./img/" . $_SESSION['username'] . "/profile_img.jpg";
@@ -47,6 +47,23 @@
         $('#btn-my-tickets').click(function(){
             window.location.replace("./user/mytickets.php");
         })  ;
+
+        $('#btn-signout').click(function(){
+            $.ajax({
+                type	: 'POST',
+                url		: 'http://localhost/train_ticket_system/utility/signout.php',
+                data	: { },
+                success	: function(response){
+
+                    console.log(response);
+                    response = JSON.parse(response);
+                    if (response['status'] == true) {
+                        alert('signout successful');
+                        window.location.replace("./signinup.php");
+                    }
+                }
+            });
+        });
     });
 </script>
 
@@ -211,6 +228,7 @@
     <div align = "center">
 
         <button id="btn-my-tickets" class="btn btn-lg btn-primary">My tickets</button>
+        <button id="btn-signout" class="btn btn-lg btn-primary">Signout</button>
 
     </div>
 
