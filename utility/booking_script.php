@@ -40,7 +40,7 @@ if (array_key_exists('username' , $_SESSION) && isset($_SESSION['username'])) {
 
         try {
 
-            if ($no_of_seats > 20) {
+            if ($no_of_seats > 20 && $no_of_seats <= 0) {
                 throw new Exception("These hacks won't work here my friend");
             }
 

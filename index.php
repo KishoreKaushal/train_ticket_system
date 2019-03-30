@@ -115,7 +115,7 @@
 <body>
     <header>
       <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-        <a class="navbar-brand" href="#">Train System</a>
+        <a class="navbar-brand" href="./index.php">Train System</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -125,7 +125,7 @@
               <a class="nav-link" href="./index.php">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Booking</a>
+              <a class="nav-link" href="./information.php">Booking</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="./information.php">Information</a>

@@ -143,7 +143,7 @@
               <a class="nav-link" href="./index.php">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Booking</a>
+              <a class="nav-link" href="./information.php">Booking</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="./information.php">Information</a>
