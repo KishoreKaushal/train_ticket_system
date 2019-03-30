@@ -60,7 +60,7 @@ if (array_key_exists('username' , $_SESSION) && isset($_SESSION['username'])) {
                     throw new Exception("Error while confirming waiting tickets - " . $DBcon_admin->error . " Sql: " . $sql);
                 }
 
-                echo "affected rows: $DBcon_admin->affected_rows \n";
+                
 
                 if ($DBcon_admin->affected_rows == 0) {
                     break;
