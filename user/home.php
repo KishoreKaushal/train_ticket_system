@@ -80,6 +80,13 @@
       background:#6cf;
     }
 </style>
+<script>
+    $(function(){
+        $('#btn-book-ticket').click(function(){
+            window.location.replace("../information.php");
+        })  ;
+    });
+</script>
 
 <body>
     <header>
@@ -131,6 +138,7 @@
         <div style = "text-align:center">
         <img src = "../img/train2.jpg" style="width: 50%; height: 50%; padding-top : 10px">
         </div>
+        <button id="btn-book-ticket">Book ticket</button>
   </h1>
 </div>
 

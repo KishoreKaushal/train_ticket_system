@@ -166,7 +166,7 @@
             </form>
         </div>
         <div class="col-sm-6" style = "width = 70%">
-        <form action="./utility/change_pass.php" method="get">
+        <form action="./utility/change_pass.php" method="post">
             <div class="container">
               <div class="row">
                 <div class="col-sm-6" style = "width: 50%; border:2px solid black;">
@@ -175,9 +175,9 @@
                   Confirm Password: <br>
                 </div>
                 <div class="col-sm-6" style = "width: 50%; border:2px solid black;">
-                  <input type="text" name="oldP"><br>
-                  <input type="text" name="newP"><br>
-                  <input type="text" name="conP"><br>
+                  <input type="text" name="old-password"><br>
+                  <input type="text" name="new-password"><br>
+                  <input type="text" name="confirm-password"><br>
                 </div>
               </div>
             </div>
